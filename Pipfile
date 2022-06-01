@@ -11,6 +11,9 @@ markdown = "*"
 django-filter = "*"
 django-extensions = "*"
 django-debug-toolbar = "*"
+psycopg2-binary = "*"
+djoser = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 flake8 = "*"
