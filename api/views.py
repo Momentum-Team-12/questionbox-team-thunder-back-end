@@ -63,11 +63,11 @@ class QuestionViewSet(viewsets.ModelViewSet):
         },
         {
             'list': QuestionListSerializerForAdmin,
-            'create': QuestionListSerializerForAdmin,
+            'create': QuestionDetailSerializerForAdmin,
             'retrieve': QuestionDetailSerializerForAdmin,
-            'update': QuestionListSerializerForAdmin,
-            'partial_update': QuestionListSerializerForAdmin,
-            'destroy': QuestionListSerializerForAdmin
+            'update': QuestionDetailSerializerForAdmin,
+            'partial_update': QuestionDetailSerializerForAdmin,
+            'destroy': QuestionDetailSerializerForAdmin
         }
     ]
 
@@ -91,7 +91,11 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
         queryset = self.queryset
         if isinstance(queryset, QuerySet) and not self.request.user.is_superuser:
+            queryset = queryset.all()
             queryset = queryset.filter(author=self.request.user)
+
+        if isinstance(queryset, QuerySet) and self.request.user.is_superuser:
+            queryset = queryset.all()
 
         return queryset
 
