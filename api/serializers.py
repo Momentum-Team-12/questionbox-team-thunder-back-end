@@ -12,12 +12,43 @@ class UserSerializer(serializers.ModelSerializer):
             )
 
 
-class QuestionSerializer(serializers.ModelSerializer):
+class QuestionListSerializerForUser(serializers.ModelSerializer):
     class Meta:
+        model = Question
+        fields = (
+            'title',
+            'created_at',
+        )
+
+
+class QuestionDetailSerializerForUser(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = (
+            'title',
+            'created_at',
+            'description',
+        )
+
+
+class QuestionListSerializerForAdmin(serializers.ModelSerializer):
+    class Meta:
+        model = Question
         fields = (
             'id',
             'title',
-            'description',
             'created_at',
             'author',
+        )
+
+
+class QuestionDetailSerializerForAdmin(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = (
+            'id',
+            'title',
+            'created_at',
+            'author',
+            'description',
         )

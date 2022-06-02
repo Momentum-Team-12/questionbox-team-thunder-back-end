@@ -7,7 +7,10 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import User, Question
 from .serializers import (
     UserSerializer,
-    QuestionSerializer,
+    QuestionListSerializerForUser,
+    QuestionDetailSerializerForUser,
+    QuestionListSerializerForAdmin,
+    QuestionDetailSerializerForAdmin,
     )
 from rest_framework import viewsets
 from django.db.models.query import QuerySet
@@ -46,8 +49,38 @@ class UserViewSet(viewsets.ViewSet):
 
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
+    serializer_class = QuestionListSerializerForUser
     permission_classes = (IsAuthenticated,)
+
+    serializer_action_classes = [
+        {
+            'list': QuestionListSerializerForUser,
+            'create': QuestionListSerializerForUser,
+            'retrieve': QuestionDetailSerializerForUser,
+            'update': QuestionListSerializerForUser,
+            'partial_update': QuestionListSerializerForUser,
+            'destroy': QuestionListSerializerForUser
+        },
+        {
+            'list': QuestionListSerializerForAdmin,
+            'create': QuestionListSerializerForAdmin,
+            'retrieve': QuestionDetailSerializerForAdmin,
+            'update': QuestionListSerializerForAdmin,
+            'partial_update': QuestionListSerializerForAdmin,
+            'destroy': QuestionListSerializerForAdmin
+        }
+    ]
+
+    def get_serializer_class(self, *args, **kwargs):
+        """Instantiate the list of serializers per action from class attribute (must be defined)."""
+        kwargs['partial'] = True
+        try:
+            if self.request.user.is_superuser:
+                return self.serializer_action_classes[1][self.action]
+            else:
+                return self.serializer_action_classes[0][self.action]
+        except (KeyError, AttributeError):
+            return super(QuestionViewSet, self).get_serializer_class()
 
     def get_queryset(self):
         assert self.queryset is not None, (
