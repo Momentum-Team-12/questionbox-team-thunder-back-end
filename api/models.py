@@ -29,10 +29,14 @@ class Question(models.Model):
 
 class Answer(models.Model):
     author = models.ForeignKey('User', on_delete=models.CASCADE, related_name="users", max_length=255)
+    question = models.ForeignKey('Question', on_delete=models.CASCADE, related_name="answers")
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    question = models.ForeignKey('Question', on_delete=models.CASCADE, related_name="answers")
-    
+
+    def __repr__(self):
+         return(
+             f"<Answer pk={self.pk} by author={self.author}>"
+         )
 
     def __str__(self):
 	    return self.description

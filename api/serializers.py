@@ -23,13 +23,13 @@ class QuestionSerializer(ModelSerializer):
 
 class AnswerSerializer(ModelSerializer):
     class Meta:
-        model: Answer
+        model = Answer
         fields = (
             'pk',
             'author',
             'description',
             'created_at',
             'question',
-            'favorite',
-            'accepted',
+            # 'favorite',
+            # 'accepted',
         )
