@@ -39,4 +39,4 @@ class Answer(models.Model):
          )
 
     def __str__(self):
-	    return self.description
+	    return f"By: {self.author} | {self.description}"
