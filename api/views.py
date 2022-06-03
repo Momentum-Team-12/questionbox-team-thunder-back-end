@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
 from django.shortcuts import get_object_or_404
 
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from .models import User, Question, Answer
 from .serializers import (
     UserSerializer,
@@ -28,6 +28,8 @@ def api_root(request, format=None):
 
 
 class UserViewSet(viewsets.ViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
     def list(self, request):
         queryset = User.objects.all()
         queryset = queryset.filter(pk=self.request.user.pk)
@@ -46,7 +48,7 @@ class UserViewSet(viewsets.ViewSet):
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionDetailSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
         if self.action in ["list"]:
@@ -83,7 +85,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         assert self.queryset is not None, (
