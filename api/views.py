@@ -101,7 +101,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        serializer.save(author=self.request.user, question=self.kwargs["question_pk"])
 
     def perform_update(self, serializer):
         if self.request.user == serializer.instance.author:
