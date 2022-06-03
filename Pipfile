@@ -16,6 +16,7 @@ djoser = "*"
 django-cors-headers = "*"
 django-on-heroku = "*"
 gunicorn = "*"
+drf-nested-routers = "*"
 
 [dev-packages]
 flake8 = "*"
