@@ -4,15 +4,19 @@ from rest_framework.reverse import reverse
 from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from .models import User, Question
+from .models import User, Question, Answer
 from .serializers import (
     UserSerializer,
     QuestionListSerializer,
     QuestionRetrieveSerializer,
     QuestionDetailSerializer,
+    AnswerSerializer,
     )
 from rest_framework import viewsets
 from django.db.models.query import QuerySet
+
+from rest_framework.generics import ListCreateAPIView
+
 
 
 @api_view(['GET'])
@@ -20,6 +24,7 @@ def api_root(request, format=None):
     return Response({
         'users': reverse('user-list-api', request=request, format=format),
         'questions': reverse('question-list-api', request=request, format=format),
+        'answers': reverse('api-answer-list', request=request, format=format),
     })
 
 
@@ -74,3 +79,15 @@ class QuestionViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if self.request.user == instance.author:
             instance.delete()
+            
+            
+class AnswerViewSet(viewsets.ModelViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+class AnswerListCV(ListCreateAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    permission_classes = (IsAuthenticated,)

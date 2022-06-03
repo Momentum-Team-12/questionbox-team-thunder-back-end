@@ -15,11 +15,32 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from api import views as api_views
+from rest_framework.routers import DefaultRouter
+from rest_framework_nested.routers import NestedSimpleRouter
+from api.views import UserViewSet, QuestionViewSet, AnswerViewSet
+
+router = DefaultRouter(trailing_slash=False)
+router.register('users', api_views.UserViewSet, 'users')
+router.register("questions", api_views.QuestionViewSet, basename="questions")
+questions_router = NestedSimpleRouter(router, "questions", lookup="question")
+questions_router.register("question_answers", api_views.AnswerViewSet, basename="question_answers",
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
+    path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include('djoser.urls.authtoken')),
     path('api-auth/', include('rest_framework.urls')),
-    path('__debug__/', include('debug_toolbar.urls')),
-
-    path('api/', include('api.urls')),
+    path('api/questions/<int:question_pk>/answers/', api_views.AnswerListCV.as_view(), name="question_answers"),
 ]
+
+
+if settings.DEBUG:
+    import debug_toolbar
+
+    urlpatterns += [
+        path("__debug__/", include(debug_toolbar.urls)),
+    ]
