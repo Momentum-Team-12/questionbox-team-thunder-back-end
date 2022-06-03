@@ -13,22 +13,22 @@ class User(AbstractUser):
         return self.username
 
 
-class Favorite(models.Model):
-    pass
-
-
 class Question(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey('User', on_delete=models.CASCADE, related_name="question_author", max_length=255)
-    favorite = models.ForeignKey('Favorite', on_delete=models.CASCADE, related_name="question_favorite", max_length=255)
+    author = models.ForeignKey('User', on_delete=models.CASCADE, related_name="author", max_length=255)
+
+    def __repr__(self):
+        return f"<Question title={self.title} pk={self.pk}>"
+
+    def __str__(self):
+        return f"{self.title} by {self.author}"
 
 
 class Answer(models.Model):
     author = models.ForeignKey('User', on_delete=models.CASCADE, related_name="users", max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    question = models.ForeignKey('Question', on_delete=models.CASCADE, related_name="question_question", max_length=255)
-    favorite = models.ForeignKey('Favorite', on_delete=models.CASCADE, related_name="answer_favorite", max_length=255)
+    question = models.ForeignKey('Question', on_delete=models.CASCADE, related_name="question", max_length=255)
     accepted = models.BooleanField(default=False)
