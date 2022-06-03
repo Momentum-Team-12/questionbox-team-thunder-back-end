@@ -22,13 +22,17 @@ class Question(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey('User', on_delete=models.CASCADE, related_name="question_author", max_length=255)
-    favorite = models.ForeignKey('Favorite', on_delete=models.CASCADE, related_name="question_favorite", max_length=255)
+    favorite = models.ForeignKey('Favorite', on_delete=models.CASCADE, related_name="question_favorite", null=True, blank=True)
 
+    def __str__(self):
+	    return self.title
 
 class Answer(models.Model):
     author = models.ForeignKey('User', on_delete=models.CASCADE, related_name="users", max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    question = models.ForeignKey('Question', on_delete=models.CASCADE, related_name="question_question", max_length=255)
-    favorite = models.ForeignKey('Favorite', on_delete=models.CASCADE, related_name="answer_favorite", max_length=255)
-    accepted = models.BooleanField(default=False)
+    question = models.ForeignKey('Question', on_delete=models.CASCADE, related_name="answers")
+    
+
+    def __str__(self):
+	    return self.description
