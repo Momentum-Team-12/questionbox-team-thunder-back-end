@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class User(AbstractUser):
-    created_at = models.DateTimeField(default=datetime.now)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __repr__(self):
         return f"<User username={self.username} pk={self.pk}>"
