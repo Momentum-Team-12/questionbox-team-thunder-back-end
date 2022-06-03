@@ -23,15 +23,13 @@ from api.views import (
     UserViewSet,
     QuestionViewSet,
     AnswerViewSet,
-    AnswerViewSet2
     )
 
 
 router = DefaultRouter()
-router.register('users', api_views.UserViewSet, 'users')
-router.register("questions", api_views.QuestionViewSet, basename="questions")
-questions_router = NestedSimpleRouter(router, "questions", lookup="question")
-questions_router.register("question_answers", api_views.AnswerViewSet, basename="question_answers")
+router.register(r'users', api_views.UserViewSet, 'users')
+router.register(r'questions', api_views.QuestionViewSet, basename="questions")
+router.register("questions/(?P<question_pk>[^/.]+)/answers", api_views.AnswerViewSet, 'question_answers')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,8 +37,6 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.authtoken')),
     path('api-auth/', include('rest_framework.urls')),
-
-    path('api/questions/(?P<question_pk>[^/.]+)/answers/', api_views.AnswerViewSet2.as_view, name="question_answers"),
 ]
 
 
