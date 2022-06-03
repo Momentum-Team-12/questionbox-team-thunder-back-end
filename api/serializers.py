@@ -51,8 +51,8 @@ class QuestionDetailSerializer(serializers.ModelSerializer):
             'created_at',
             'description',
         )
-        
-        
+
+
 class AnswerSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(read_only=True, slug_field="username")
 

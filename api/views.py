@@ -79,12 +79,33 @@ class QuestionViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if self.request.user == instance.author:
             instance.delete()
-            
-            
+
+
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class AnswerViewSet2(viewsets.ModelViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self, *args, **kwargs):
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
+
+        queryset = self.queryset
+        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
+        if isinstance(queryset, QuerySet):
+            queryset = queryset.all()
+            queryset = queryset.filter(question=question)
+
+        return queryset
 
 
 class AnswerListCV(ListCreateAPIView):
