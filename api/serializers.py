@@ -1,28 +1,59 @@
-from pyexpat import model
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer 
-from .models import Question, Answer, Favorite
+from .models import User, Question, Answer
 
-# class UserSerializer(ModelSerializer): 
-#     class Meta:
-#         model = User
-#         fields = (
-#             'username',
-#             'id',
-#         )
 
-class QuestionSerializer(ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'username',
+            'email',
+        )
+
+
+class QuestionListSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(read_only=True, slug_field="username")
+
     class Meta:
         model = Question
         fields = (
-            'pk',
-            'author',
+            'id',
             'title',
-            'description',
             'created_at',
-        )        
+            'author',
+        )
 
-class AnswerSerializer(ModelSerializer):
+
+class QuestionRetrieveSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(read_only=True, slug_field="username")
+
+    class Meta:
+        model = Question
+        fields = (
+            'id',
+            'title',
+            'created_at',
+            'author',
+            'description',
+        )
+
+
+class QuestionDetailSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(read_only=True, slug_field="username")
+
+    class Meta:
+        model = Question
+        fields = (
+            'id',
+            'title',
+            'author',
+            'created_at',
+            'description',
+        )
+        
+        
+class AnswerSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(read_only=True, slug_field="username")
 
     class Meta:
@@ -33,6 +64,4 @@ class AnswerSerializer(ModelSerializer):
             'description',
             'created_at',
             'question',
-            # 'favorite',
-            # 'accepted',
         )

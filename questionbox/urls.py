@@ -19,15 +19,14 @@ from django.conf import settings
 from api import views as api_views
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedSimpleRouter
-from api.views import QuestionViewSet, AnswerViewSet
+from api.views import UserViewSet, QuestionViewSet, AnswerViewSet
 
 router = DefaultRouter(trailing_slash=False)
+router.register('users', api_views.UserViewSet, 'users')
 router.register("questions", api_views.QuestionViewSet, basename="questions")
 questions_router = NestedSimpleRouter(router, "questions", lookup="question")
 questions_router.register("question_answers", api_views.AnswerViewSet, basename="question_answers",
 )
-# likely need to change "question_answers" to "_list" ?
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,6 +36,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/questions/<int:question_pk>/answers/', api_views.AnswerListCV.as_view(), name="question_answers"),
 ]
+
 
 if settings.DEBUG:
     import debug_toolbar
