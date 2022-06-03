@@ -26,7 +26,7 @@ router.register("questions", api_views.QuestionViewSet, basename="questions")
 questions_router = NestedSimpleRouter(router, "questions", lookup="question")
 questions_router.register("question_answers", api_views.AnswerViewSet, basename="question_answers",
 )
-# router.register(r'questions/(?P<questions_pk>[^/.]+)/answers', AnswerViewSet, 'api-answers')
+# likely need to change "question_answers" to "_list" ?
 
 
 urlpatterns = [
@@ -35,7 +35,7 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.authtoken')),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/questions/<int:question_pk>/answers/', api_views.AnswerListCV.as_view(), name="question_answer"),
+    path('api/questions/<int:question_pk>/answers/', api_views.AnswerListCV.as_view(), name="question_answers"),
 ]
 
 if settings.DEBUG:
