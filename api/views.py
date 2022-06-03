@@ -18,7 +18,6 @@ from django.db.models.query import QuerySet
 from rest_framework.generics import ListCreateAPIView
 
 
-
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
@@ -79,15 +78,35 @@ class QuestionViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if self.request.user == instance.author:
             instance.delete()
-            
-            
+
+
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
     permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self):
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
 
-class AnswerListCV(ListCreateAPIView):
-    queryset = Answer.objects.all()
-    serializer_class = AnswerSerializer
-    permission_classes = (IsAuthenticated,)
+        queryset = self.queryset
+        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
+        if isinstance(queryset, QuerySet):
+            queryset = queryset.all()
+            queryset = queryset.filter(question=question)
+
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
+        if self.request.user == serializer.instance.author:
+            serializer.save()
+
+    def perform_destroy(self, instance):
+        if self.request.user == instance.author:
+            instance.delete()

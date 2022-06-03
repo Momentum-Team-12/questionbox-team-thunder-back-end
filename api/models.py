@@ -32,12 +32,11 @@ class Answer(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     accepted = models.BooleanField(default=False)
-    
+
     def __repr__(self):
-         return(
-             f"<Answer pk={self.pk} by author={self.author}>"
-         )
+        return(
+            f"<Answer pk={self.pk} by author={self.author}>"
+        )
 
     def __str__(self):
-	    return f"By: {self.author} | {self.description}"
-   
+        return f"By: {self.author} | {self.description}"

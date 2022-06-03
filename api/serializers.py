@@ -36,6 +36,7 @@ class QuestionRetrieveSerializer(serializers.ModelSerializer):
             'created_at',
             'author',
             'description',
+            'answers',
         )
 
 
@@ -51,10 +52,11 @@ class QuestionDetailSerializer(serializers.ModelSerializer):
             'created_at',
             'description',
         )
-        
-        
+
+
 class AnswerSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(read_only=True, slug_field="username")
+    question = serializers.SlugRelatedField(read_only=True, slug_field="title")
 
     class Meta:
         model = Answer
