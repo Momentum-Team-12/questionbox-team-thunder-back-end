@@ -1,4 +1,5 @@
 from pyexpat import model
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer 
 from .models import Question, Answer, Favorite
 
@@ -22,6 +23,8 @@ class QuestionSerializer(ModelSerializer):
         )        
 
 class AnswerSerializer(ModelSerializer):
+    author = serializers.SlugRelatedField(read_only=True, slug_field="username")
+
     class Meta:
         model = Answer
         fields = (
