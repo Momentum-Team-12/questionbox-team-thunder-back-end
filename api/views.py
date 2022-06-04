@@ -20,15 +20,6 @@ from .custom_permissions import (
     )
 
 
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'users': reverse('user-list-api', request=request, format=format),
-        'questions': reverse('question-list-api', request=request, format=format),
-        'answers': reverse('api-answer-list', request=request, format=format),
-    })
-
-
 class UserViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
