@@ -15,8 +15,6 @@ from .serializers import (
 from rest_framework import viewsets
 from django.db.models.query import QuerySet
 
-from rest_framework.generics import ListCreateAPIView
-
 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -28,11 +26,12 @@ def api_root(request, format=None):
 
 
 class UserViewSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def list(self, request):
         queryset = User.objects.all()
-        queryset = queryset.filter(pk=self.request.user.pk)
+        if self.request.user.is_authenticated:
+            queryset = queryset.filter(pk=self.request.user.pk)
 
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -48,7 +47,7 @@ class UserViewSet(viewsets.ViewSet):
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionDetailSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
         if self.action in ["list"]:
@@ -67,11 +66,13 @@ class QuestionViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
         if isinstance(queryset, QuerySet):
             queryset = queryset.all()
-            queryset = queryset.filter(author=self.request.user)
+            if self.request.user.is_authenticated:
+                queryset = queryset.filter(author=self.request.user)
         return queryset
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        if self.request.user.is_authenticated:
+            serializer.save(author=self.request.user)
 
     def perform_update(self, serializer):
         if self.request.user == serializer.instance.author:
@@ -85,7 +86,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
 class AnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
         assert self.queryset is not None, (
@@ -98,13 +99,15 @@ class AnswerViewSet(viewsets.ModelViewSet):
         question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
         if isinstance(queryset, QuerySet):
             queryset = queryset.all()
-            queryset = queryset.filter(question=question)
+            if self.request.user.is_authenticated:
+                queryset = queryset.filter(question=question)
 
         return queryset
 
     def perform_create(self, serializer):
         question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
-        serializer.save(author=self.request.user, question=question)
+        if self.request.user.is_authenticated:
+            serializer.save(author=self.request.user, question=question)
 
     def perform_update(self, serializer):
         if self.request.user == serializer.instance.author:
