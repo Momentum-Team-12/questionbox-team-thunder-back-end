@@ -13,17 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from api import views as api_views
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedSimpleRouter
-from api.views import (
-    UserViewSet,
-    QuestionViewSet,
-    AnswerViewSet,
-    )
 
 
 router = DefaultRouter()
@@ -34,9 +30,15 @@ router.register("questions/(?P<question_pk>[^/.]+)/answers", api_views.AnswerVie
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+
     path('api/auth/', include('djoser.urls')),
     path('api/auth/', include('djoser.urls.authtoken')),
     path('api-auth/', include('rest_framework.urls')),
+
+    path('api/answers/', api_views.AnswerListRetrieve.as_view({'get':'list'}), name='answers-list'),
+    path('api/answers', api_views.AnswerListRetrieve.as_view({'get':'list'}), name='answers-list'),
+    path('api/answers/<int:pk>/', api_views.AnswerListRetrieve.as_view({'get':'retrieve'}), name='answer-detail'),
+    path('api/answers/<int:pk>', api_views.AnswerListRetrieve.as_view({'get':'retrieve'}), name='answer-detail'),
 ]
 
 

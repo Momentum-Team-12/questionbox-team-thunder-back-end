@@ -15,14 +15,9 @@ from .serializers import (
 from rest_framework import viewsets
 from django.db.models.query import QuerySet
 
-
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'users': reverse('user-list-api', request=request, format=format),
-        'questions': reverse('question-list-api', request=request, format=format),
-        'answers': reverse('api-answer-list', request=request, format=format),
-    })
+from .custom_permissions import (
+    ReadOnly,
+    )
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -116,3 +111,22 @@ class AnswerViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if self.request.user == instance.author:
             instance.delete()
+
+
+class AnswerListRetrieve(viewsets.ViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+    permission_classes = (ReadOnly,)
+
+    def list(self, request):
+        queryset = self.queryset.all()
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = self.queryset.all()
+        queryset = queryset.filter(pk=pk)
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
