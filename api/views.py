@@ -113,20 +113,41 @@ class AnswerViewSet(viewsets.ModelViewSet):
             instance.delete()
 
 
-class AnswerListRetrieve(viewsets.ViewSet):
+class AnswerListRetrieve(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
-    permission_classes = (ReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    def list(self, request):
-        queryset = self.queryset.all()
-        serializer = self.serializer_class(queryset, many=True)
+    def get_serializer_class(self):
+        if self.action in ["list"]:
+            return AnswerSerializer
+        if self.action in ["retrieve"]:
+            return AnswerSerializer
+        return super().get_serializer_class()
 
-        return Response(serializer.data)
+    def get_queryset(self):
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
 
-    def retrieve(self, request, pk=None):
-        queryset = self.queryset.all()
-        queryset = queryset.filter(pk=pk)
-        serializer = self.serializer_class(queryset, many=True)
+        queryset = self.queryset
+        if isinstance(queryset, QuerySet):
+            queryset = queryset.all()
+            if self.request.user.is_authenticated:
+                queryset = queryset.filter(author=self.request.user)
+        return queryset    
 
-        return Response(serializer.data)
+    # def list(self, request):
+    #     queryset = self.queryset.all()
+    #     serializer = self.serializer_class(queryset, many=True)
+
+    #     return Response(serializer.data)
+
+    # def retrieve(self, request, pk=None):
+    #     queryset = self.queryset.all()
+    #     queryset = queryset.filter(pk=pk)
+    #     serializer = self.serializer_class(queryset, many=True)
+
+    #     return Response(serializer.data)
