@@ -26,6 +26,7 @@ router = DefaultRouter()
 router.register(r'users', api_views.UserViewSet, 'users')
 router.register(r'questions', api_views.QuestionViewSet, basename="questions")
 router.register("questions/(?P<question_pk>[^/.]+)/answers", api_views.AnswerViewSet, 'question_answers')
+router.register("all_questions/(?P<question_pk>[^/.]+)/all_answers", api_views.AllAnswerViewSet, 'all_question_all_answers')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,11 +45,6 @@ urlpatterns = [
     path('api/all_questions', api_views.AllQuestionView.as_view({'get': 'list'}), name='all-questions-list'),
     path('api/all_questions/<int:pk>/', api_views.AllQuestionView.as_view({'get': 'retrieve'}), name='all-question-detail'),
     path('api/all_questions/<int:pk>', api_views.AllQuestionView.as_view({'get': 'retrieve'}), name='all-question-detail'),
-
-    path('api/all_questions/<int:pk>/all_answers/', api_views.AllAnswerView.as_view({'get': 'list'}), name='all-answers-list'),
-    path('api/all_questions/<int:pk>/all_answers', api_views.AllAnswerView.as_view({'get': 'list'}), name='all-answers-list'),
-    path('api/all_questions/<question_pk>/all_answers/<int:pk>/', api_views.AllAnswerView.as_view({'get': 'retrieve'}), name='all-answer-detail'),
-    path('api/all_questions/<question_pk>/all_answers/<int:pk>', api_views.AllAnswerView.as_view({'get': 'retrieve'}), name='all-answer-detail'),
 ]
 
 

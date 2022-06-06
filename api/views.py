@@ -95,8 +95,7 @@ class AnswerViewSet(viewsets.ModelViewSet):
         question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
         if isinstance(queryset, QuerySet):
             queryset = queryset.all()
-            if self.request.user.is_authenticated:
-                queryset = queryset.filter(question=question)
+            queryset = queryset.filter(question=question)
 
         return queryset
 
@@ -159,22 +158,35 @@ class AllQuestionView(viewsets.ViewSet):
         return Response(serializer.data)
 
 
-class AllAnswerView(viewsets.ViewSet):
+class AllAnswerViewSet(viewsets.ModelViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    def list(self, request):
-        queryset = Answer.objects.all()
-        breakpoint()
-        question = get_object_or_404()
-        queryset = queryset.filter(question=question)
-        serializer = AllAnswerSerializer(queryset, many=True)
+    def get_queryset(self):
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
 
-        return Response(serializer.data)
+        queryset = self.queryset
+        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
+        if isinstance(queryset, QuerySet):
+            queryset = queryset.all()
+            queryset = queryset.filter(question=question)
 
-    def retrieve(self, request, pk=None):
-        queryset = Answer.objects.all()
-        question = get_object_or_404(queryset, pk=self.kwargs["question_pk"])
-        queryset = queryset.filter(question=question)
+        return queryset
 
-        serializer = AllAnswerSerializer(queryset, many=True)
-        return Response(serializer.data)
+    def perform_create(self, serializer):
+        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
+        if self.request.user.is_authenticated:
+            serializer.save(author=self.request.user, question=question)
+
+    def perform_update(self, serializer):
+        if self.request.user == serializer.instance.author:
+            serializer.save()
+
+    def perform_destroy(self, instance):
+        if self.request.user == instance.author:
+            instance.delete()
