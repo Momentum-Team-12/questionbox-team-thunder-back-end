@@ -118,13 +118,6 @@ class AnswerListRetrieve(viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    def get_serializer_class(self):
-        if self.action in ["list"]:
-            return AnswerSerializer
-        if self.action in ["retrieve"]:
-            return AnswerSerializer
-        return super().get_serializer_class()
-
     def get_queryset(self):
         assert self.queryset is not None, (
             "'%s' should either include a `queryset` attribute, "
@@ -137,17 +130,12 @@ class AnswerListRetrieve(viewsets.ModelViewSet):
             queryset = queryset.all()
             if self.request.user.is_authenticated:
                 queryset = queryset.filter(author=self.request.user)
-        return queryset    
+        return queryset
 
-    # def list(self, request):
-    #     queryset = self.queryset.all()
-    #     serializer = self.serializer_class(queryset, many=True)
+    def perform_update(self, serializer):
+        if self.request.user == serializer.instance.author:
+            serializer.save()
 
-    #     return Response(serializer.data)
-
-    # def retrieve(self, request, pk=None):
-    #     queryset = self.queryset.all()
-    #     queryset = queryset.filter(pk=pk)
-    #     serializer = self.serializer_class(queryset, many=True)
-
-    #     return Response(serializer.data)
+    def perform_destroy(self, instance):
+        if self.request.user == instance.author:
+            instance.delete()
