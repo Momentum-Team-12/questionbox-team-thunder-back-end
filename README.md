@@ -13,6 +13,31 @@ Required fields: username, password
 Optional fields: email
 Response: same info you provided means successful
 
+### request
+
+Username and password are required.
+
+```json
+POST auth/users
+
+{
+  "username": "Luke",
+  "password": "Momentum"
+}
+```
+
+### response
+
+```json
+201 Created
+
+{
+  "id": 4,  
+  "email": "",
+  "username": "Luke",
+}
+
+```
 
 ## Login user
 
@@ -29,8 +54,8 @@ POST auth/token/login
 
 ```json
 {
-    username: "Luke",
-    password: "Momentum1"
+    "username": "Luke",
+    "password": "Momentum1"
 }
 ```
 
@@ -127,10 +152,18 @@ GET /questions/id
 
 ```json
 {
-    "id": 5,
-    "title": "Manny Test",
-    "created_at": "2022-06-04T18:50:40.911851-04:00",
-    "author": "Luke"
+	{
+		"id": 5,
+		"title": "Title Test",
+		"created_at": "2022-06-04T18:50:40.911851-04:00",
+		"author": "Luke"
+	},
+	{
+		"id": 6,
+		"title": "Power Converters",
+		"created_at": "2022-06-06T19:36:36.928032-04:00",
+		"author": "Luke"
+	}
 }
 ```
 
@@ -147,9 +180,8 @@ POST /questions/
 
 ```json
 {
-  "title": "Favorite Band",
-  "question": "What is your favorite band?",
-  "favorited": []
+	"title": "Desert wanderer",	
+	"description": "What's with that creepy guy walking around the desert with I hood on? Isn't he hot?!"
 }
 ```
 
@@ -159,17 +191,13 @@ POST /questions/
 201 Created
 
 {
-    "pk": 11,
-    "title": "Favorite Band",
-    "question": "What is your favorite band?",
-    "created": "2022-04-09T16:58:51.359484-05:00",
-    "user": "admin",
-    "favorited": []
+	"id": 7,
+	"title": "Desert wanderer",
+	"author": "Luke",
+	"created_at": "2022-06-06T19:40:31.577077-04:00",
+	"description": "What's with that creepy guy walking around the desert with I hood on? Isn't he hot?!"
 }
-
 ```
-
-
 
 ## Details for a specific question
 
@@ -242,7 +270,6 @@ PUT /question/id/ or PATCH /question/id/
     "description": "Is this thing on?!"
 }
 ```
-
 
 ## Delete Question
 
