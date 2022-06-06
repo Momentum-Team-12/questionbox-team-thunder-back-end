@@ -67,3 +67,20 @@ class AnswerSerializer(serializers.ModelSerializer):
             'created_at',
             'question',
         )
+
+
+class AllAnswerSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(read_only=True, slug_field="username")
+    question = serializers.SlugRelatedField(read_only=True, slug_field="title")
+    description = serializers.SlugRelatedField(read_only=True, slug_field="description")
+
+    class Meta:
+        model = Answer
+        fields = (
+            'pk',
+            'author',
+            'description',
+            'created_at',
+            'question',
+            'accepted',
+        )

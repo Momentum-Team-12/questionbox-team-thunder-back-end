@@ -11,6 +11,7 @@ from .serializers import (
     QuestionRetrieveSerializer,
     QuestionDetailSerializer,
     AnswerSerializer,
+    AllAnswerSerializer,
     )
 from rest_framework import viewsets
 from django.db.models.query import QuerySet
@@ -139,3 +140,41 @@ class AnswerListRetrieve(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if self.request.user == instance.author:
             instance.delete()
+
+
+class AllQuestionView(viewsets.ViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def list(self, request):
+        queryset = Question.objects.all()
+        serializer = QuestionListSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Question.objects.all()
+        question = get_object_or_404(queryset, pk=pk)
+
+        serializer = QuestionRetrieveSerializer(question)
+        return Response(serializer.data)
+
+
+class AllAnswerView(viewsets.ViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def list(self, request):
+        queryset = Answer.objects.all()
+        breakpoint()
+        question = get_object_or_404()
+        queryset = queryset.filter(question=question)
+        serializer = AllAnswerSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Answer.objects.all()
+        question = get_object_or_404(queryset, pk=self.kwargs["question_pk"])
+        queryset = queryset.filter(question=question)
+
+        serializer = AllAnswerSerializer(queryset, many=True)
+        return Response(serializer.data)
