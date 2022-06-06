@@ -35,10 +35,10 @@ urlpatterns = [
     path('api/auth/', include('djoser.urls.authtoken')),
     path('api-auth/', include('rest_framework.urls')),
 
-    path('api/answers/', api_views.AnswerListRetrieve.as_view({'get':'list'}), name='answers-list'),
-    path('api/answers', api_views.AnswerListRetrieve.as_view({'get':'list'}), name='answers-list'),
-    path('api/answers/<int:pk>/', api_views.AnswerListRetrieve.as_view({'get':'retrieve'}), name='answer-detail'),
-    path('api/answers/<int:pk>', api_views.AnswerListRetrieve.as_view({'get':'retrieve'}), name='answer-detail'),
+    path('api/answers/', api_views.AnswerListRetrieve.as_view({'get': 'list'}), name='answers-list'),
+    path('api/answers', api_views.AnswerListRetrieve.as_view({'get': 'list'}), name='answers-list'),
+    path('api/answers/<int:pk>/', api_views.AnswerListRetrieve.as_view({'get': 'retrieve', "put": "update", "patch": "partial_update", "delete": "destroy"}), name='answer-detail'),
+    path('api/answers/<int:pk>', api_views.AnswerListRetrieve.as_view({'get': 'retrieve', "put": "update", "patch": "partial_update", "delete": "destroy"}), name='answer-detail'),
 ]
 
 
