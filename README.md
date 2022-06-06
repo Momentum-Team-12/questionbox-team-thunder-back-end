@@ -303,5 +303,3 @@ DELETE /question/id/
 |PUT|[/questions/{id}](#update-an-existing-question)|Update an existing question|
 |PATCH|[/questions/{id}](#update-an-existing-question)|Update part of an existing question|
 |DELETE|[/questions/{id}](#delete-question)|Delete an existing question|
-
-# testing
