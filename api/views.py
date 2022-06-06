@@ -138,16 +138,3 @@ class AnswerListRetrieve(viewsets.ModelViewSet):
             if self.request.user.is_authenticated:
                 queryset = queryset.filter(author=self.request.user)
         return queryset    
-
-    # def list(self, request):
-    #     queryset = self.queryset.all()
-    #     serializer = self.serializer_class(queryset, many=True)
-
-    #     return Response(serializer.data)
-
-    # def retrieve(self, request, pk=None):
-    #     queryset = self.queryset.all()
-    #     queryset = queryset.filter(pk=pk)
-    #     serializer = self.serializer_class(queryset, many=True)
-
-    #     return Response(serializer.data)
