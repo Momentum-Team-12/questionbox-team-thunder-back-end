@@ -163,6 +163,13 @@ class AllAnswerViewSet(viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+    def get_serializer_class(self):
+        if self.action in ["list"]:
+            return AnswerSerializer
+        if self.action in ["retrieve", "update", "partial_update"]:
+            return AllAnswerSerializer
+        return super().get_serializer_class()
+
     def get_queryset(self):
         assert self.queryset is not None, (
             "'%s' should either include a `queryset` attribute, "
@@ -184,7 +191,7 @@ class AllAnswerViewSet(viewsets.ModelViewSet):
             serializer.save(author=self.request.user, question=question)
 
     def perform_update(self, serializer):
-        if self.request.user == serializer.instance.author:
+        if self.request.user == serializer.instance.question.author:
             serializer.save()
 
     def perform_destroy(self, instance):
