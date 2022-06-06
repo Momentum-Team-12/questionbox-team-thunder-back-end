@@ -78,7 +78,6 @@ class AllAnswerSerializer(serializers.ModelSerializer):
         fields = (
             'pk',
             'author',
-            'description',
             'created_at',
             'question',
             'accepted',
