@@ -39,6 +39,7 @@ POST auth/users
 
 ```
 
+
 ## Login user
 
 POST /api/auth/token/login/
@@ -48,11 +49,9 @@ NOTE: use auth token from now on
 
 ### request
 
-```
-POST auth/token/login
-```
-
 ```json
+POST auth/token/login
+
 {
     "username": "Luke",
     "password": "Momentum1"
@@ -77,7 +76,7 @@ POST auth/token/login
 GET /api/auth/users/me/
 Fields you can see: id, username, email
 
-```
+```json
 POST /auth/users/me/
 ```
 
@@ -90,6 +89,8 @@ POST /auth/users/me/
 }
 ```
 
+
+
 ## Logout user
 
 POST /api/auth/token/logout/
@@ -97,15 +98,16 @@ Required fields: None
 
 ### request
 
-```
+```json
 POST auth/token/logout
 ```
 
 ### response
 
-```txt
+```json
 204 No Content
 ```
+
 
 
 ## List of questions (non-logged in user)
@@ -117,13 +119,13 @@ Response for GET: id, title, created_at
 
 User can be anonymous / guest
 
-```txt
+```json
 GET /questions/
 ```
 
 ### response
 
-```txt
+```json
 200 Message
 ```
 
@@ -140,17 +142,15 @@ Response for GET: id, title, created_at
 
 User must be logged in
 
-```txt
+```json
 GET /questions/id 
 ```
 
 ### response
 
-```txt
-200 Message
-```
-
 ```json
+200 Message
+
 {
 	{
 		"id": 5,
@@ -174,11 +174,9 @@ Required Fields for POST: title, description
 
 User must be logged in
 
-```txt
-POST /questions/
-```
-
 ```json
+POST /questions/
+
 {
 	"title": "Desert wanderer",	
 	"description": "What's with that creepy guy walking around the desert with I hood on? Isn't he hot?!"
@@ -199,6 +197,8 @@ POST /questions/
 }
 ```
 
+
+
 ## Details for a specific question
 
 GET /api/questions/id/
@@ -209,19 +209,16 @@ Response for GET: id, title, created_at, author, description, answers
 
 User must be logged in 
 
-
-```txt
+```json
 GET /question/id/ 
 ```
 
 
 ### response
 
-```txt
-200 Message
-```
-
 ```json
+200 Message
+
 {
     "id": 5,
     "title": "Title Test",
@@ -230,6 +227,7 @@ GET /question/id/
     "description": "is this on?"
 }
 ```
+
 
 
 ## Update an existing question
@@ -243,12 +241,9 @@ Response for PUT, PATCH:
 
 User must be logged in 
 
-
-```txt
-PUT /question/id/ or PATCH /question/id/ 
-```
-
 ```json
+PUT /question/id/ or PATCH /question/id/ 
+
 {
     "title": "Title Test",
     "description": "is this on?",
@@ -257,11 +252,9 @@ PUT /question/id/ or PATCH /question/id/
 
 ### response
 
-```txt
-200 Message
-```
-
 ```json
+200 Message
+
 {
     "id": 5,
     "title": "Testing 123",
@@ -279,13 +272,13 @@ User must be logged in
 
 Required Fields: question
 
-```txt
+```json
 DELETE /question/id/
 ```
 
 ### response
 
-```txt
+```json
 204 No Content
 ```
 
