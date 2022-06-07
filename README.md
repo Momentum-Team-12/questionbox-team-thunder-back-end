@@ -7,13 +7,13 @@ NOTE: API Root is /api/
 
 ## Create a new user
 
-Required fields: username, password
-Optional fields: email
 Response: same info you provided means successful
 
 ### request
 
-Username and password are required.
+Required fields: username and password
+
+Optional fields: email
 
 ```json
 POST auth/users
@@ -41,7 +41,7 @@ POST auth/users
 ## Login user
 
 Required fields: username, password
-Response: auth_token
+
 NOTE: use auth token from now on
 
 ### request
@@ -57,6 +57,7 @@ POST auth/token/login
 
 ### response
 
+
 ```json
 200 OK
 400 Bad Request
@@ -70,7 +71,8 @@ POST auth/token/login
 
 ## User's info
 
-Fields you can see: id, username, email
+Requires a user to be logged in.
+
 
 ```json
 GET /auth/users/me/
@@ -107,12 +109,11 @@ POST auth/token/logout
 
 ## List of questions (non-logged in user)
 
-GET /api/all_questions/
-Response for GET: id, title, created_at, author
-
 ### request
 
 User can be anonymous / guest
+
+Required fields: None
 
 ```json
 GET /all_questions/
@@ -142,10 +143,6 @@ GET /all_questions/
 
 
 ## List of questions (logged in user)
-
-GET /api/questions/
-Allowed methods: GET, POST
-Response for GET: id, title, created_at
 
 ### request
 
@@ -180,7 +177,7 @@ GET /questions/
 
 ## Create a new question for this user (logged in user)
 
-Required Fields for POST: title, description
+Required fields: title and description
 
 ### request
 
@@ -213,8 +210,7 @@ POST /questions/
 
 ## Details for a specific question
 
-GET /api/questions/id/
-Response for GET: id, title, created_at, author, description, answers
+Response for GET: id, title, created_at, author, description, answers (if any)
 
 
 ### request
@@ -244,9 +240,7 @@ GET /questions/id/
 
 ## Update an existing question
 
-Allowed Methods: PUT, PATCH
 Required fields for PUT, PATCH: title, description
-Response for PUT, PATCH: id, title, author, created_at, description
 
 ### request
 
@@ -281,7 +275,7 @@ PUT /question/id/ or PATCH /question/id/
 
 User must be logged in 
 
-Required Fields: question
+Required Fields: question id
 
 ```json
 DELETE /question/id/
@@ -305,5 +299,153 @@ DELETE /question/id/
 |POST|[/questions/](#create-a-new-question)|Create a new question|
 |GET|[/questions/{id}](#details-for-a-specific-question)|Details for a specific question|
 |PUT|[/questions/{id}](#update-an-existing-question)|Update an existing question|
-|PATCH|[/questions/{id}](#update-an-existing-question)|Update part of an existing question|
+|PATCH|[/questions/{id}](#update-an-existing-question)|Update an existing question|
 |DELETE|[/questions/{id}](#delete-question)|Delete an existing question|
+
+
+
+
+|GET|[/answers/](#list-all-answers)|List all answers|
+# not listing when logged in
+# ok on local when logged in
+
+## List all answers
+
+Requires a user to be logged in.
+
+### request
+
+```json
+GET /answers/
+```
+
+### response
+
+```json
+200 OK
+
+[
+	{
+		"pk": 1,
+		"author": "user1",
+		"description": "user1 question1 answer1",
+		"created_at": "2022-06-03T17:52:10.041543-04:00",
+		"question": "user1 question1"
+	},
+	{
+		"pk": 2,
+		"author": "user1",
+		"description": "user1 question1 answer2",
+		"created_at": "2022-06-03T17:52:15.895155-04:00",
+		"question": "user1 question1"
+	},
+	{
+		"pk": 3,
+		"author": "user2",
+		"description": "user2 question2 answer1",
+		"created_at": "2022-06-03T17:58:45.838335-04:00",
+		"question": "user2 question1"
+	},
+	{
+		"pk": 4,
+		"author": "user2",
+		"description": "user2 question2 answer2",
+		"created_at": "2022-06-03T17:58:53.299983-04:00",
+		"question": "user2 question1"
+	},
+]
+```
+
+
+
+|POST|[/answers/](#create-a-new-answer)|Add a new answer|
+# can't POST to /answers/ in Prod - tested with pk/id and title
+# can do it via questions/question_pk/answers/ on local though -> is it pushed to Heroku?
+
+
+
+|GET|[/answers/{id}](#details-for-a-specific-answer)|Details for a specific answer|
+
+ ## Details for a specific answer
+
+### request
+
+User must be logged in.
+
+Required Fields: answer id
+
+```json
+GET /answers/id/
+```
+
+### response
+
+```json
+200 OK
+
+{
+	"pk": 2,
+	"author": "Vader",
+	"description": "mebbe.. come to the moon by Alderaan!",
+	"created_at": "2022-06-05T17:08:08.343275-04:00",
+	"question": "Speeder"
+}
+
+```
+
+
+|PUT|[/answers/{id}](#update-an-existing-answer)|Update an existing answer|
+|PATCH|[/answers/{id}](#update-an-existing-answer)|Update part an existing answer|
+
+## Update an existing answer
+
+Required fields for PUT, PATCH: description
+
+### request
+
+User must be logged in 
+
+```json
+PUT /answer/id/ or PATCH /answer/id/ 
+
+{
+    "description": "come to Alderaan..",
+}
+```
+
+### response
+
+```json
+200 Message
+
+{
+	"pk": 2,
+	"author": "Vader",
+	"description": "mebbe.. come to the moon by Alderaan!!!",
+	"created_at": "2022-06-05T17:08:08.343275-04:00",
+	"question": "Speeder"
+}
+```
+
+
+|DELETE|[/answers/{id}](#delete-answer)|Delete answer|
+
+## Delete Answer
+
+### request
+
+User must be logged in 
+
+Required Fields: answer id
+
+```json
+DELETE /question/id/answers/id
+```
+
+### response
+
+```json
+204 No Content
+```
+
+
