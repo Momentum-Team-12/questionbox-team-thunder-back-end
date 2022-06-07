@@ -79,6 +79,23 @@ class AllAnswerSerializer(serializers.ModelSerializer):
             'pk',
             'author',
             'created_at',
+            'description',
             'question',
             'accepted',
+        )
+
+
+class FavoriteQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'favorite_questions',
+        )
+
+
+class FavoriteAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'favorite_answers',
         )

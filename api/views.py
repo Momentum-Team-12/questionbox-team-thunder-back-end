@@ -12,6 +12,8 @@ from .serializers import (
     QuestionDetailSerializer,
     AnswerSerializer,
     AllAnswerSerializer,
+    FavoriteQuestionSerializer,
+    FavoriteAnswerSerializer,
     )
 from rest_framework import viewsets
 from django.db.models.query import QuerySet
@@ -132,6 +134,9 @@ class AnswerListRetrieve(viewsets.ModelViewSet):
                 queryset = queryset.filter(author=self.request.user)
         return queryset
 
+    def perform_create(self, serializer):
+        pass
+
     def perform_update(self, serializer):
         if self.request.user == serializer.instance.author:
             serializer.save()
@@ -156,6 +161,27 @@ class AllQuestionView(viewsets.ViewSet):
 
         serializer = QuestionRetrieveSerializer(question)
         return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = FavoriteQuestionSerializer
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        if self.request.user.is_authenticated:
+            queryset = Question.objects.all()
+            question = get_object_or_404(queryset, pk=pk)
+
+            self.request.user.favorite_questions.add()
 
 
 class AllAnswerViewSet(viewsets.ModelViewSet):
@@ -191,9 +217,43 @@ class AllAnswerViewSet(viewsets.ModelViewSet):
             serializer.save(author=self.request.user, question=question)
 
     def perform_update(self, serializer):
-        if self.request.user == serializer.instance.question.author:
+        if self.request.user == serializer.instance.author:
             serializer.save()
 
     def perform_destroy(self, instance):
         if self.request.user == instance.author:
             instance.delete()
+
+
+class FavoriteQuestionView(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
+        queryset = self.request.user.favorite_questions.all()
+        serializer = FavoriteQuestionSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = self.request.user.favorite_questions.all()
+        question = get_object_or_404(queryset, pk=pk)
+
+        serializer = FavoriteQuestionSerializer(question)
+        return Response(serializer.data)
+
+
+class FavoriteAnswerView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
+        queryset = self.request.user.favorite_answers.all()
+        serializer = FavoriteAnswerSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = self.request.user.favorite_answers.all()
+        answer = get_object_or_404(queryset, pk=pk)
+
+        serializer = FavoriteQuestionSerializer(answer)
+        return Response(serializer.data)

@@ -2,15 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class User(AbstractUser):
-
-    def __repr__(self):
-        return f"<User username={self.username} pk={self.pk}>"
-
-    def __str__(self):
-        return self.username
-
-
 class Question(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -38,3 +29,14 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"By: {self.author} | {self.description}"
+
+
+class User(AbstractUser):
+    favorite_questions = models.ManyToManyField(Question, related_name="favorite_questions")
+    favorite_answers = models.ManyToManyField(Answer, related_name="favorite_answers")
+
+    def __repr__(self):
+        return f"<User username={self.username} pk={self.pk}>"
+
+    def __str__(self):
+        return self.username
