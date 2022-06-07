@@ -7,8 +7,6 @@ NOTE: API Root is /api/
 
 ## Create a new user
 
-Go to url: /api/auth/users/
-method: POST
 Required fields: username, password
 Optional fields: email
 Response: same info you provided means successful
@@ -22,7 +20,7 @@ POST auth/users
 
 {
   "username": "Luke",
-  "password": "Momentum"
+  "password": "Momentum1"
 }
 ```
 
@@ -42,7 +40,6 @@ POST auth/users
 
 ## Login user
 
-POST /api/auth/token/login/
 Required fields: username, password
 Response: auth_token
 NOTE: use auth token from now on
@@ -73,19 +70,18 @@ POST auth/token/login
 
 ## User's info
 
-GET /api/auth/users/me/
 Fields you can see: id, username, email
 
 ```json
-POST /auth/users/me/
+GET /auth/users/me/
 ```
 
 ### response
 ```json
 {
-    "email": "",
     "id": 4,
-    "username": "Luke"
+    "username": "Luke",
+    "email": "",
 }
 ```
 
@@ -93,7 +89,6 @@ POST /auth/users/me/
 
 ## Logout user
 
-POST /api/auth/token/logout/
 Required fields: None
 
 ### request
@@ -120,7 +115,7 @@ Response for GET: id, title, created_at
 User can be anonymous / guest
 
 ```json
-GET /questions/
+GET /all_questions/
 ```
 
 ### response
@@ -132,7 +127,6 @@ GET /questions/
 
 
 ## List of questions (logged in user)
-## Create a new question for this user
 
 GET /api/questions/
 Allowed methods: GET, POST
@@ -167,7 +161,10 @@ GET /questions/id
 }
 ```
 
-POST /api/questions/
+
+
+## Create a new question for this user (logged in user)
+
 Required Fields for POST: title, description
 
 ### request
