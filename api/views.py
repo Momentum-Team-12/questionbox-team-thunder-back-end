@@ -71,7 +71,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
             serializer.save(author=self.request.user)
 
     def perform_update(self, serializer):
-        if self.request.user == serializer.instance.author:
+        breakpoint()
+        if self.request.user == serializer.instance.author and serializer.instance.answers.count:
             serializer.save()
 
     def perform_destroy(self, instance):
