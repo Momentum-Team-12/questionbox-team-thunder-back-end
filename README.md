@@ -12,7 +12,7 @@ NOTE: API Root is /api/
 |POST|[/auth/users/me/](#users-info)|User's info|
 |POST|[/auth/token/logout/](#logout-user)|Logout user|
 |GET|[/all_questions/](#list-of-questions-non-logged-in-user)|List all questions (not logged in/anonymous)|
-|GET|[/questions/](##list-of-questions-logged-in-user)|List all questions for a user|
+|GET|[/questions/](#list-of-questions-logged-in-user)|List all questions for a user|
 |POST|[/questions/](#create-a-new-question-for-this-user-logged-in-user)|Create a new question|
 |GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
 |PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
@@ -98,6 +98,8 @@ GET /auth/users/me/
 
 ### Response
 ```json
+200 OK
+
 {
     "id": 4,
     "username": "Luke",
@@ -439,5 +441,3 @@ DELETE /question/id/answers/id
 ```json
 204 No Content
 ```
-
-
