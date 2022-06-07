@@ -108,7 +108,7 @@ POST auth/token/logout
 ## List of questions (non-logged in user)
 
 GET /api/all_questions/
-Response for GET: id, title, created_at
+Response for GET: id, title, created_at, author
 
 ### request
 
@@ -122,6 +122,21 @@ GET /all_questions/
 
 ```json
 200 Message
+
+{
+	{
+		"id": 5,
+		"title": "Title Test",
+		"created_at": "2022-06-04T18:50:40.911851-04:00",
+		"author": "Luke"
+	},
+	{
+		"id": 6,
+		"title": "Power Converters",
+		"created_at": "2022-06-06T19:36:36.928032-04:00",
+		"author": "Luke"
+	}
+}
 ```
 
 
@@ -137,7 +152,7 @@ Response for GET: id, title, created_at
 User must be logged in
 
 ```json
-GET /questions/id 
+GET /questions/
 ```
 
 ### response
@@ -207,7 +222,7 @@ Response for GET: id, title, created_at, author, description, answers
 User must be logged in 
 
 ```json
-GET /question/id/ 
+GET /questions/id/ 
 ```
 
 
@@ -229,10 +244,9 @@ GET /question/id/
 
 ## Update an existing question
 
-Go to url: /api/questions/id/
 Allowed Methods: PUT, PATCH
 Required fields for PUT, PATCH: title, description
-Response for PUT, PATCH: 
+Response for PUT, PATCH: id, title, author, created_at, description
 
 ### request
 
@@ -286,7 +300,7 @@ DELETE /question/id/
 |POST|[/auth/token/login/](#login-user)|Login user|
 |POST|[/auth/users/me/](#users-info)|User's info|
 |POST|[/auth/token/logout/](#logout-user)|Logout user|
-|GET|[/all_questions/](#list-all-questions)|List all questions (not logged in/anonymous)|
+|GET|[/all_questions/](#list-of-questions)|List all questions (not logged in/anonymous)|
 |GET|[/questions/](#list-all-questions-for-a-user)|List all questions for a user|
 |POST|[/questions/](#create-a-new-question)|Create a new question|
 |GET|[/questions/{id}](#details-for-a-specific-question)|Details for a specific question|
