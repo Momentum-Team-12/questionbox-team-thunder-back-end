@@ -7,9 +7,7 @@ NOTE: API Root is /api/
 
 ## Create a new user
 
-Response: same info you provided means successful
-
-### request
+### Request
 
 Required fields: username and password
 
@@ -24,7 +22,9 @@ POST auth/users
 }
 ```
 
-### response
+### Response
+
+Response: same info you provided means successful
 
 ```json
 201 Created
@@ -42,9 +42,7 @@ POST auth/users
 
 Required fields: username, password
 
-NOTE: use auth token from now on
-
-### request
+### Request
 
 ```json
 POST auth/token/login
@@ -55,18 +53,17 @@ POST auth/token/login
 }
 ```
 
-### response
+### Response
 
 
 ```json
 200 OK
-400 Bad Request
 
 {
     "auth_token": "d99a2de1b0a09db0fc2da23c9fdb1fc2447fff5d"
 }
 ``` 
-
+NOTE: use auth token from now on
 
 
 ## User's info
@@ -78,7 +75,7 @@ Requires a user to be logged in.
 GET /auth/users/me/
 ```
 
-### response
+### Response
 ```json
 {
     "id": 4,
@@ -93,13 +90,13 @@ GET /auth/users/me/
 
 Required fields: None
 
-### request
+### Request
 
 ```json
 POST auth/token/logout
 ```
 
-### response
+### Response
 
 ```json
 204 No Content
@@ -109,7 +106,7 @@ POST auth/token/logout
 
 ## List of questions (non-logged in user)
 
-### request
+### Request
 
 User can be anonymous / guest
 
@@ -119,7 +116,7 @@ Required fields: None
 GET /all_questions/
 ```
 
-### response
+### Response
 
 ```json
 200 Message
@@ -144,7 +141,7 @@ GET /all_questions/
 
 ## List of questions (logged in user)
 
-### request
+### Request
 
 User must be logged in
 
@@ -152,7 +149,7 @@ User must be logged in
 GET /questions/
 ```
 
-### response
+### Response
 
 ```json
 200 Message
@@ -179,7 +176,7 @@ GET /questions/
 
 Required fields: title and description
 
-### request
+### Request
 
 User must be logged in
 
@@ -192,7 +189,7 @@ POST /questions/
 }
 ```
 
-### response
+### Response
 
 ```json
 201 Created
@@ -210,10 +207,7 @@ POST /questions/
 
 ## Details for a specific question
 
-Response for GET: id, title, created_at, author, description, answers (if any)
-
-
-### request
+### Request
 
 User must be logged in 
 
@@ -222,7 +216,9 @@ GET /questions/id/
 ```
 
 
-### response
+### Response
+
+Response for GET: id, title, created_at, author, description, answers (if any)
 
 ```json
 200 Message
@@ -240,9 +236,9 @@ GET /questions/id/
 
 ## Update an existing question
 
-Required fields for PUT, PATCH: title, description
+Required fields for PUT, PATCH: title and/or description
 
-### request
+### Request
 
 User must be logged in 
 
@@ -255,7 +251,7 @@ PUT /question/id/ or PATCH /question/id/
 }
 ```
 
-### response
+### Response
 
 ```json
 200 Message
@@ -271,7 +267,7 @@ PUT /question/id/ or PATCH /question/id/
 
 ## Delete Question
 
-### request
+### Request
 
 User must be logged in 
 
@@ -281,7 +277,7 @@ Required Fields: question id
 DELETE /question/id/
 ```
 
-### response
+### Response
 
 ```json
 204 No Content
@@ -301,25 +297,27 @@ DELETE /question/id/
 |PUT|[/questions/{id}](#update-an-existing-question)|Update an existing question|
 |PATCH|[/questions/{id}](#update-an-existing-question)|Update an existing question|
 |DELETE|[/questions/{id}](#delete-question)|Delete an existing question|
-
-
-
-
 |GET|[/answers/](#list-all-answers)|List all answers|
-# not listing when logged in
-# ok on local when logged in
+|POST|[/answers/](#create-a-new-answer)|Add a new answer|
+|GET|[/answers/{id}](#details-for-a-specific-answer)|Details for a specific answer|
+|PUT|[/answers/{id}](#update-an-existing-answer)|Update an existing answer|
+|PATCH|[/answers/{id}](#update-an-existing-answer)|Update part an existing answer|
+|DELETE|[/answers/{id}](#delete-answer)|Delete answer|
+
 
 ## List all answers
+### not listing when logged in
+### ok on local when logged in
 
 Requires a user to be logged in.
 
-### request
+### Request
 
 ```json
 GET /answers/
 ```
 
-### response
+### Response
 
 ```json
 200 OK
@@ -358,17 +356,15 @@ GET /answers/
 
 
 
-|POST|[/answers/](#create-a-new-answer)|Add a new answer|
-# can't POST to /answers/ in Prod - tested with pk/id and title
-# can do it via questions/question_pk/answers/ on local though -> is it pushed to Heroku?
+## Create a new answer
+### can't POST to /answers/ in Prod - tested with pk/id and title
+### can do it via questions/question_pk/answers/ on local though -> is it pushed to Heroku?
 
 
 
-|GET|[/answers/{id}](#details-for-a-specific-answer)|Details for a specific answer|
+## Details for a specific answer
 
- ## Details for a specific answer
-
-### request
+### Request
 
 User must be logged in.
 
@@ -378,7 +374,7 @@ Required Fields: answer id
 GET /answers/id/
 ```
 
-### response
+### Response
 
 ```json
 200 OK
@@ -394,14 +390,11 @@ GET /answers/id/
 ```
 
 
-|PUT|[/answers/{id}](#update-an-existing-answer)|Update an existing answer|
-|PATCH|[/answers/{id}](#update-an-existing-answer)|Update part an existing answer|
-
 ## Update an existing answer
 
 Required fields for PUT, PATCH: description
 
-### request
+### Request
 
 User must be logged in 
 
@@ -413,7 +406,7 @@ PUT /answer/id/ or PATCH /answer/id/
 }
 ```
 
-### response
+### Response
 
 ```json
 200 Message
@@ -428,11 +421,9 @@ PUT /answer/id/ or PATCH /answer/id/
 ```
 
 
-|DELETE|[/answers/{id}](#delete-answer)|Delete answer|
-
 ## Delete Answer
 
-### request
+### Request
 
 User must be logged in 
 
@@ -442,7 +433,7 @@ Required Fields: answer id
 DELETE /question/id/answers/id
 ```
 
-### response
+### Response
 
 ```json
 204 No Content
