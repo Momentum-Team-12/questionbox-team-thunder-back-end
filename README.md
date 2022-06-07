@@ -19,7 +19,7 @@ NOTE: API Root is /api/
 |PATCH|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
 |GET|[/answers/](#list-all-answers)|List all answers|
-|POST|[all_questions/{id}/all_answers/](#create-a-new-answer)|Create a new answer|
+|POST|[/all_questions/{id}/all_answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
 |PATCH|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
@@ -89,7 +89,7 @@ NOTE: use auth token from now on
 
 ## User's info
 
-Requires a user to be logged in.
+Requirement: user must be logged in.
 
 
 ```json
@@ -166,7 +166,7 @@ GET /all_questions/
 
 ### Request
 
-User must be logged in
+Requirement: user must be logged in.
 
 ```json
 GET /questions/
@@ -201,7 +201,7 @@ Required fields: title and description
 
 ### Request
 
-User must be logged in
+Requirement: user must be logged in.
 
 ```json
 POST /questions/
@@ -232,7 +232,7 @@ POST /questions/
 
 ### Request
 
-User must be logged in 
+Requirement: user must be logged in. 
 
 ```json
 GET /questions/id/ 
@@ -263,7 +263,7 @@ Required fields for PUT, PATCH: title and/or description
 
 ### Request
 
-User must be logged in 
+Requirement: user must be logged in. 
 
 ```json
 PUT /question/id/ or PATCH /question/id/ 
@@ -292,7 +292,7 @@ PUT /question/id/ or PATCH /question/id/
 
 ### Request
 
-User must be logged in 
+Requirement: user must be logged in. 
 
 Required Fields: question id
 
@@ -321,6 +321,8 @@ GET /answers/
 ```
 
 ### Response
+
+Anonymous user:
 
 ```json
 200 OK
@@ -357,11 +359,34 @@ GET /answers/
 ]
 ```
 
+Logged in user:
+
+```json
+200 OK
+
+[
+	{
+		"pk": 1,
+		"author": "user1",
+		"description": "user1 question1 answer1",
+		"created_at": "2022-06-03T17:52:10.041543-04:00",
+		"question": "user1 question1"
+	},
+	{
+		"pk": 2,
+		"author": "user1",
+		"description": "user1 question1 answer2",
+		"created_at": "2022-06-03T17:52:15.895155-04:00",
+		"question": "user1 question1"
+	},
+]
+```
+
 
 
 ## Create a new answer
 
-User must be logged in.
+Requirement: user must be logged in.
 
 ### Request
 
@@ -392,7 +417,7 @@ POST /all_questions/id/all_answers/
 
 ### Request
 
-User must be logged in.
+Requirement: user must be logged in.
 
 Required Fields: answer id
 
@@ -422,7 +447,7 @@ Required fields for PUT, PATCH: description
 
 ### Request
 
-User must be logged in 
+Requirement: user must be logged in. 
 
 ```json
 PUT /answer/id/ or PATCH /answer/id/ 
@@ -451,7 +476,7 @@ PUT /answer/id/ or PATCH /answer/id/
 
 ### Request
 
-User must be logged in 
+Requirement: user must be logged in. 
 
 Required Fields: answer id
 
