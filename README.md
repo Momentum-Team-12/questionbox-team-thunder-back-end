@@ -5,6 +5,27 @@ All endpoints begin with `https://questionbox-team-thunder-api.herokuapp.com/api
 NOTE: API Root is /api/
 
 
+|  Method  |  Endpoint  |  Description |
+| -------- | ---------- | ------------ |
+|POST|[/auth/users/](#create-a-new-user)|Create a new user|
+|POST|[/auth/token/login/](#login-user)|Login user|
+|POST|[/auth/users/me/](#users-info)|User's info|
+|POST|[/auth/token/logout/](#logout-user)|Logout user|
+|GET|[/all_questions/](#list-of-questions)|List all questions (not logged in/anonymous)|
+|GET|[/questions/](#list-all-questions-for-a-user)|List all questions for a user|
+|POST|[/questions/](#create-a-new-question)|Create a new question|
+|GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
+|PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
+|PATCH|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
+|DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
+|GET|[/answers/](#list-all-answers)|List all answers|
+|POST|[/answers/](#create-a-new-answer)|Add a new answer|
+|GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
+|PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
+|PATCH|[/answers/{id}/](#update-an-existing-answer)|Update part an existing answer|
+|DELETE|[/answers/{id}/](#delete-answer)|Delete answer|
+
+
 ## Create a new user
 
 ### Request
@@ -119,7 +140,7 @@ GET /all_questions/
 ### Response
 
 ```json
-200 Message
+200 OK
 
 {
 	{
@@ -152,7 +173,7 @@ GET /questions/
 ### Response
 
 ```json
-200 Message
+200 OK
 
 {
 	{
@@ -221,7 +242,7 @@ GET /questions/id/
 Response for GET: id, title, created_at, author, description, answers (if any)
 
 ```json
-200 Message
+200 OK
 
 {
     "id": 5,
@@ -254,7 +275,7 @@ PUT /question/id/ or PATCH /question/id/
 ### Response
 
 ```json
-200 Message
+200 OK
 
 {
     "id": 5,
@@ -283,26 +304,6 @@ DELETE /question/id/
 204 No Content
 ```
 
-
-|  Method  |  Endpoint  |  Description |
-| -------- | ---------- | ------------ |
-|POST|[/auth/users/](#create-a-new-user)|Create a new user|
-|POST|[/auth/token/login/](#login-user)|Login user|
-|POST|[/auth/users/me/](#users-info)|User's info|
-|POST|[/auth/token/logout/](#logout-user)|Logout user|
-|GET|[/all_questions/](#list-of-questions)|List all questions (not logged in/anonymous)|
-|GET|[/questions/](#list-all-questions-for-a-user)|List all questions for a user|
-|POST|[/questions/](#create-a-new-question)|Create a new question|
-|GET|[/questions/{id}](#details-for-a-specific-question)|Details for a specific question|
-|PUT|[/questions/{id}](#update-an-existing-question)|Update an existing question|
-|PATCH|[/questions/{id}](#update-an-existing-question)|Update an existing question|
-|DELETE|[/questions/{id}](#delete-question)|Delete an existing question|
-|GET|[/answers/](#list-all-answers)|List all answers|
-|POST|[/answers/](#create-a-new-answer)|Add a new answer|
-|GET|[/answers/{id}](#details-for-a-specific-answer)|Details for a specific answer|
-|PUT|[/answers/{id}](#update-an-existing-answer)|Update an existing answer|
-|PATCH|[/answers/{id}](#update-an-existing-answer)|Update part an existing answer|
-|DELETE|[/answers/{id}](#delete-answer)|Delete answer|
 
 
 ## List all answers
@@ -409,7 +410,7 @@ PUT /answer/id/ or PATCH /answer/id/
 ### Response
 
 ```json
-200 Message
+200 OK
 
 {
 	"pk": 2,
