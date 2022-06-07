@@ -11,18 +11,18 @@ NOTE: API Root is /api/
 |POST|[/auth/token/login/](#login-user)|Login user|
 |POST|[/auth/users/me/](#users-info)|User's info|
 |POST|[/auth/token/logout/](#logout-user)|Logout user|
-|GET|[/all_questions/](#list-of-questions)|List all questions (not logged in/anonymous)|
-|GET|[/questions/](#list-all-questions-for-a-user)|List all questions for a user|
-|POST|[/questions/](#create-a-new-question)|Create a new question|
+|GET|[/all_questions/](#list-of-questions-non-logged-in-user)|List all questions (not logged in/anonymous)|
+|GET|[/questions/](##list-of-questions-logged-in-user)|List all questions for a user|
+|POST|[/questions/](#create-a-new-question-for-this-user-logged-in-user)|Create a new question|
 |GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
 |PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
 |PATCH|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
 |GET|[/answers/](#list-all-answers)|List all answers|
-|POST|[/answers/](#create-a-new-answer)|Add a new answer|
+|POST|[/answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
-|PATCH|[/answers/{id}/](#update-an-existing-answer)|Update part an existing answer|
+|PATCH|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
 |DELETE|[/answers/{id}/](#delete-answer)|Delete answer|
 
 
@@ -307,8 +307,8 @@ DELETE /question/id/
 
 
 ## List all answers
-### not listing when logged in
-### ok on local when logged in
+### --not listing when logged in--
+### --ok on local when logged in--
 
 Requires a user to be logged in.
 
@@ -358,8 +358,8 @@ GET /answers/
 
 
 ## Create a new answer
-### can't POST to /answers/ in Prod - tested with pk/id and title
-### can do it via questions/question_pk/answers/ on local though -> is it pushed to Heroku?
+### --can't POST to /answers/ in Prod - tested with pk/id and title--
+### --can do it via questions/question_pk/answers/ on local though -> is it pushed to Heroku?--
 
 
 
