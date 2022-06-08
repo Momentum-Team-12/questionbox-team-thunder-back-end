@@ -14,18 +14,22 @@ from .serializers import (
     AllAnswerSerializer,
     )
 from rest_framework import viewsets
-from django.db.models.query import QuerySet
 
+from django.db.models.query import QuerySet
 from .custom_permissions import (
     ReadOnly,
     )
+from rest_framework import generics
+
+from django.db.models import Q
+from rest_framework import filters
 
 
 class UserViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def list(self, request):
-        queryset = User.objects.all()
+        queryset = User.objects.all().order_by('-id')
         if self.request.user.is_authenticated:
             queryset = queryset.filter(pk=self.request.user.pk)
 
@@ -33,7 +37,7 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = User.objects.all()
+        queryset = User.objects.all().order_by('-id')
         user = get_object_or_404(queryset, pk=pk)
 
         serializer = UserSerializer(user)
@@ -157,7 +161,6 @@ class AllQuestionView(viewsets.ViewSet):
         serializer = QuestionRetrieveSerializer(question)
         return Response(serializer.data)
 
-
 class AllAnswerViewSet(viewsets.ModelViewSet):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
@@ -197,3 +200,17 @@ class AllAnswerViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if self.request.user == instance.author:
             instance.delete()
+
+class QuestionSearchView(generics.ListAPIView):
+    serializer_class = QuestionListSerializer
+    queryset = Question.objects.all().order_by("-id")
+        
+    def get_queryset(self):
+        search_term = self.request.query_params.get("search")
+        if search_term is not None:
+            results = Question.objects.filter(
+                description__icontains=self.request.query_params.get("search")
+            )
+        else:
+            results = self.queryset
+        return results
