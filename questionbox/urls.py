@@ -45,6 +45,11 @@ urlpatterns = [
     path('api/all_questions', api_views.AllQuestionView.as_view({'get': 'list'}), name='all-questions-list'),
     path('api/all_questions/<int:pk>/', api_views.AllQuestionView.as_view({'get': 'retrieve'}), name='all-question-detail'),
     path('api/all_questions/<int:pk>', api_views.AllQuestionView.as_view({'get': 'retrieve'}), name='all-question-detail'),
+
+    path('api/questions/<int:pk>/favorites', api_views.FavoriteQuestionView.as_view({'get': 'list'}), name='favorite-questions-list'),
+    path('api/questions/<int:pk>/favorites/', api_views.FavoriteQuestionView.as_view({'get': 'list'}), name='favorite-questions-list'),
+    path('api/answers/<int:pk>/favorites', api_views.FavoriteAnswerView.as_view({'get': 'retrieve'}), name='favorite-answer-detail'),
+    path('api/answers/<int:pk>/favorites/', api_views.FavoriteAnswerView.as_view({'get': 'retrieve'}), name='favorite-answer-detail'),
 ]
 
 
