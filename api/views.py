@@ -235,7 +235,7 @@ class FavoriteQuestionView(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def perform_create(self, serializer):
-        question = get_object_or_404(Question, question_pk)
+        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
         self.request.user.favorite_questions.add(question)
         serializer.save()
 
@@ -243,6 +243,7 @@ class FavoriteQuestionView(viewsets.ModelViewSet):
         pass
 
     def perform_destroy(self, instance):
+        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
         self.request.user.favorite_questions.remove()
 
 
