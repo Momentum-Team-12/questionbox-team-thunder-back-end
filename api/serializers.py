@@ -22,6 +22,7 @@ class QuestionListSerializer(serializers.ModelSerializer):
             'title',
             'created_at',
             'author',
+            'description',
         )
 
 

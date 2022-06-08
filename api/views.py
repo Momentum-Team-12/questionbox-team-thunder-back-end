@@ -16,18 +16,22 @@ from .serializers import (
     FavoriteAnswerSerializer,
     )
 from rest_framework import viewsets
-from django.db.models.query import QuerySet
 
+from django.db.models.query import QuerySet
 from .custom_permissions import (
     ReadOnly,
     )
+from rest_framework import generics
+
+from django.db.models import Q
+from rest_framework import filters
 
 
 class UserViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def list(self, request):
-        queryset = User.objects.all()
+        queryset = User.objects.all().order_by('-id')
         if self.request.user.is_authenticated:
             queryset = queryset.filter(pk=self.request.user.pk)
 
@@ -35,7 +39,7 @@ class UserViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = User.objects.all()
+        queryset = User.objects.all().order_by('-id')
         user = get_object_or_404(queryset, pk=pk)
 
         serializer = UserSerializer(user)
@@ -147,41 +151,32 @@ class AnswerListRetrieve(viewsets.ModelViewSet):
 
 
 class AllQuestionView(viewsets.ViewSet):
+    queryset = Question.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+    def get_queryset(self):
+            search_term = self.request.query_params.get("search")
+            if search_term is not None:
+                results = Question.objects.filter(
+                    Q(title__icontains=search_term) | 
+                    Q(description__icontains=search_term))
+
+            else:
+                results = self.queryset.all().order_by('-id')
+            return results
+
     def list(self, request):
-        queryset = Question.objects.all()
+        queryset = self.get_queryset()
         serializer = QuestionListSerializer(queryset, many=True)
 
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = Question.objects.all()
+        queryset = self.get_queryset()
         question = get_object_or_404(queryset, pk=pk)
 
         serializer = QuestionRetrieveSerializer(question)
         return Response(serializer.data)
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = FavoriteQuestionSerializer
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
-
-    def perform_update(self, serializer):
-        if self.request.user.is_authenticated:
-            queryset = Question.objects.all()
-            question = get_object_or_404(queryset, pk=pk)
-
-            self.request.user.favorite_questions.add()
 
 
 class AllAnswerViewSet(viewsets.ModelViewSet):
