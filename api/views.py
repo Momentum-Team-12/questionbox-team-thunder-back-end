@@ -61,18 +61,15 @@ class QuestionViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
-        assert self.queryset is not None, (
-            "'%s' should either include a `queryset` attribute, "
-            "or override the `get_queryset()` method."
-            % self.__class__.__name__
-        )
+        search_term = self.request.query_params.get("search")
+        if search_term is not None:
+            results = Question.objects.filter(
+                Q(title__icontains=search_term) | 
+                Q(description__icontains=search_term))
 
-        queryset = self.queryset
-        if isinstance(queryset, QuerySet):
-            queryset = queryset.all()
-            if self.request.user.is_authenticated:
-                queryset = queryset.filter(author=self.request.user)
-        return queryset
+        else:
+            results = self.queryset.all().order_by('-id')
+        return results.order_by('-id')
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
