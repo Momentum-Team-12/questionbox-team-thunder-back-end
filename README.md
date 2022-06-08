@@ -388,6 +388,8 @@ Logged in user:
 
 Requirement: user must be logged in.
 
+Requirement: description
+
 ### Request
 
 ```json
