@@ -45,8 +45,6 @@ urlpatterns = [
     path('api/all_questions', api_views.AllQuestionView.as_view({'get': 'list'}), name='all-questions-list'),
     path('api/all_questions/<int:pk>/', api_views.AllQuestionView.as_view({'get': 'retrieve'}), name='all-question-detail'),
     path('api/all_questions/<int:pk>', api_views.AllQuestionView.as_view({'get': 'retrieve'}), name='all-question-detail'),
-
-    path('api/search/', api_views.QuestionSearchView.as_view(), name='question-seach')
 ]
 
 

@@ -146,16 +146,28 @@ class AnswerListRetrieve(viewsets.ModelViewSet):
 
 
 class AllQuestionView(viewsets.ViewSet):
+    queryset = Question.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+    def get_queryset(self):
+            search_term = self.request.query_params.get("search")
+            if search_term is not None:
+                results = Question.objects.filter(
+                    Q(title__icontains=search_term) | 
+                    Q(description__icontains=search_term))
+
+            else:
+                results = self.queryset.all().order_by('-id')
+            return results
+
     def list(self, request):
-        queryset = Question.objects.all()
+        queryset = self.get_queryset()
         serializer = QuestionListSerializer(queryset, many=True)
 
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = Question.objects.all()
+        queryset = self.get_queryset()
         question = get_object_or_404(queryset, pk=pk)
 
         serializer = QuestionRetrieveSerializer(question)
@@ -200,17 +212,3 @@ class AllAnswerViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         if self.request.user == instance.author:
             instance.delete()
-
-class QuestionSearchView(generics.ListAPIView):
-    serializer_class = QuestionListSerializer
-    queryset = Question.objects.all().order_by("-id")
-        
-    def get_queryset(self):
-        search_term = self.request.query_params.get("search")
-        if search_term is not None:
-            results = Question.objects.filter(
-                description__icontains=self.request.query_params.get("search")
-            )
-        else:
-            results = self.queryset
-        return results
