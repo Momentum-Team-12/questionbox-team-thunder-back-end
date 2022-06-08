@@ -225,21 +225,25 @@ class AllAnswerViewSet(viewsets.ModelViewSet):
             instance.delete()
 
 
-class FavoriteQuestionView(viewsets.ViewSet):
+class FavoriteQuestionView(viewsets.ModelViewSet):
+    serializer_class = FavoriteQuestionSerializer
     permission_classes = (IsAuthenticated,)
 
-    def list(self, request):
+    def get_queryset(self):
         queryset = self.request.user.favorite_questions.all()
         serializer = FavoriteQuestionSerializer(queryset, many=True)
-
         return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
-        queryset = self.request.user.favorite_questions.all()
-        question = get_object_or_404(queryset, pk=pk)
+    def perform_create(self, serializer):
+        question = get_object_or_404(Question, question_pk)
+        self.request.user.favorite_questions.add(question)
+        serializer.save()
 
-        serializer = FavoriteQuestionSerializer(question)
-        return Response(serializer.data)
+    def perform_update(self, serializer):
+        pass
+
+    def perform_destroy(self, instance):
+        self.request.user.favorite_questions.remove()
 
 
 class FavoriteAnswerView(viewsets.ModelViewSet):
