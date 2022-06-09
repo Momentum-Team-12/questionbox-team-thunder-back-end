@@ -11,19 +11,25 @@ NOTE: API Root is /api/
 |POST|[/auth/token/login/](#login-user)|Login user|
 |POST|[/auth/users/me/](#users-info)|User's info|
 |POST|[/auth/token/logout/](#logout-user)|Logout user|
-|GET|[/all_questions/](#list-of-questions-non-logged-in-user)|List all questions (not logged in/anonymous)|
-|GET|[/questions/](#list-of-questions-logged-in-user)|List all questions for a user|
+|GET|[/all_questions/](#list-of-questions-non-logged-in-user)|List all questions (anonymous/guest)|
+|GET|[/questions/](#list-of-questions-logged-in-user)|List all logged in user created questions|
+|GET|[/all_questions?search=<search_term>/](#search-questions)|Search questions (limited to one search term)|
 |POST|[/questions/](#create-a-new-question-for-this-user-logged-in-user)|Create a new question|
 |GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
 |PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
 |PATCH|[/questions/{id}/](#update-part-of-an-existing-question)|Update part of an existing question|
+|PUT|[/all_questions/{id}/favorite/](#favorite-a-question)|Favorite a question|
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
-|GET|[/answers/](#list-all-answers)|List all answers|
-|POST|[/all_questions/{id}/all_answers/](#create-a-new-answer)|Create a new answer|
+|GET|[/all_answers/](#list-all-answers)|List all answers (anonymous/guest)|
+|GET|[/answers/](#list-all-users-answers)|List all logged in user created answers|
+|GET|[/all_answers?search=<search_term>/](#search-answers)|Search answers (limited to one search term)|
+|POST|[/questions/{id}/answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
 |PATCH|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
+|PUT|[/all_answers/{id}/favorite/](#favorite-an-answer)|Favorite an answer|
 |DELETE|[/answers/{id}/](#delete-answer)|Delete answer|
+|PATCH|[/all_questions/{id}/all_answers/{id}/](#mark-answer-as-accepted)|Mark an answer as accepted|
 
 
 
@@ -84,8 +90,7 @@ POST auth/token/login/
     "auth_token": "d99a2de1b0a09db0fc2da23c9fdb1fc2447fff5d"
 }
 ``` 
-NOTE: Must use the auth token from now for logged in user.
-
+NOTE: auth_token must be passed for all requests with the logged in user. It remains active till user is [logged out](#logout-user).
 
 
 ## User's info
@@ -205,6 +210,36 @@ GET /questions/
 		"author": "Luke"
 	}
 }
+```
+
+
+
+## Search questions
+
+Search through questions.
+
+### Request
+
+Note: can only use 1 search parameter. It queries title and descriptions fields.
+
+```json
+GET /all_questions?search=converter
+```
+
+### Response
+
+```json
+200 OK
+
+[
+	{
+		"id": 6,
+		"title": "Power Converters",
+		"created_at": "2022-06-06T19:36:36.928032-04:00",
+		"author": "Luke",
+		"description": "Anywhere else got em?! Tosche Station is all out."
+	}
+]
 ```
 
 
@@ -358,6 +393,34 @@ PATCH /question/id/
 
 
 
+## Favorite a question
+
+Logged in user can favorite any question.
+
+Requirement: user must be logged in.
+
+### Request
+
+Required in URL: question's id.
+
+```json
+PUT /all_questions/id/favorite/
+```
+
+### Response
+
+Return will be the question's id. 
+
+```json
+200 OK
+
+{
+	"id": 5
+}
+```
+
+
+
 ## Delete Question
 
 Requirement: user must be logged in. 
@@ -398,7 +461,58 @@ If anonymous / guest attempts to delete a question:
 
 ## List all answers
 
-Anonymous user will see all answers. 
+Returns list of all answers.
+
+User can be anonymous / guest or logged in.
+
+### Request
+
+```json
+GET /all_answers/
+```
+
+### Response
+
+```json
+200 OK
+
+[
+	{
+		"id": 5,
+		"created_at": "2022-06-06T13:46:05.672874-04:00",
+		"author": "user1",
+		"description": "user1 question2 answer1"
+	},
+	{
+		"id": 4,
+		"created_at": "2022-06-03T17:58:53.299983-04:00",
+		"author": "user2",
+		"description": "user2 question2 answer2"
+	},
+	{
+		"id": 3,
+		"created_at": "2022-06-03T17:58:45.838335-04:00",
+		"author": "user2",
+		"description": "user2 question2 answer1"
+	},
+	{
+		"id": 2,
+		"created_at": "2022-06-03T17:52:15.895155-04:00",
+		"author": "user1",
+		"description": "user1 question1 answer2"
+	},
+	{
+		"id": 1,
+		"created_at": "2022-06-03T17:52:10.041543-04:00",
+		"author": "user1",
+		"description": "user1 question1 answer1"
+	}
+]
+```
+
+
+
+## List all user created answers
 
 Logged in user will only see their answers.
 
@@ -410,8 +524,6 @@ GET /answers/
 
 ### Response
 
-Anonymous user:
-
 ```json
 200 OK
 
@@ -429,44 +541,48 @@ Anonymous user:
 		"description": "user1 question1 answer2",
 		"created_at": "2022-06-03T17:52:15.895155-04:00",
 		"question": "user1 question1"
-	},
-	{
-		"pk": 3,
-		"author": "user2",
-		"description": "user2 question2 answer1",
-		"created_at": "2022-06-03T17:58:45.838335-04:00",
-		"question": "user2 question1"
-	},
-	{
-		"pk": 4,
-		"author": "user2",
-		"description": "user2 question2 answer2",
-		"created_at": "2022-06-03T17:58:53.299983-04:00",
-		"question": "user2 question1"
 	},
 ]
 ```
 
-Logged in user:
+
+
+## Search answers
+
+Search through answers.
+
+### Request
+
+Note: can only use 1 search parameter. It queries the description field.
+
+```json
+GET /all_answers?search=test
+```
+
+### Response
 
 ```json
 200 OK
 
 [
 	{
-		"pk": 1,
+		"id": 11,
+		"created_at": "2022-06-09T12:18:09.641307-04:00",
 		"author": "user1",
-		"description": "user1 question1 answer1",
-		"created_at": "2022-06-03T17:52:10.041543-04:00",
-		"question": "user1 question1"
+		"description": "Test answer/description from user1"
 	},
 	{
-		"pk": 2,
+		"id": 10,
+		"created_at": "2022-06-09T12:16:02.861452-04:00",
 		"author": "user1",
-		"description": "user1 question1 answer2",
-		"created_at": "2022-06-03T17:52:15.895155-04:00",
-		"question": "user1 question1"
+		"description": "Test answer/description from user1"
 	},
+	{
+		"id": 8,
+		"created_at": "2022-06-08T11:56:03.711841-04:00",
+		"author": "Ben",
+		"description": "Odd/scary sounds perhaps? Can anyone confirm?!"
+	}
 ]
 ```
 
@@ -476,12 +592,14 @@ Logged in user:
 
 Requirement: user must be logged in.
 
-Requirement: description
-
 ### Request
 
+Requirement: description
+
+Required in URL: question's id.
+
 ```json
-POST /all_questions/id/all_answers/
+POST /questions/id/answers/
 
 {
 	"description": "user1 response to user2's question pk4"
@@ -505,11 +623,11 @@ POST /all_questions/id/all_answers/
 
 ## Details for a specific answer
 
-### Request
-
 Requirement: user must be logged in.
 
-Required Fields: answer id
+### Request
+
+Required in URL: answer's id.
 
 ```json
 GET /answers/id/
@@ -533,11 +651,13 @@ GET /answers/id/
 
 ## Update an existing answer
 
-Required fields for PUT, PATCH: description
+Requirement: user must be logged in.
 
 ### Request
 
-Requirement: user must be logged in. 
+Required field for PUT or PATCH: description 
+
+Required in URL: answer's id.
 
 ```json
 PUT /answer/id/ or PATCH /answer/id/ 
@@ -555,20 +675,43 @@ PUT /answer/id/ or PATCH /answer/id/
 {
 	"pk": 2,
 	"author": "Vader",
-	"description": "mebbe.. come to the moon by Alderaan!!!",
+	"description": "come to Alderaan..",
 	"created_at": "2022-06-05T17:08:08.343275-04:00",
 	"question": "Speeder"
 }
 ```
 
 
-## Delete Answer
+
+## Favorite an answer
+
+Logged in user can favorite any answer.
+
+Requirement: user must be logged in.
 
 ### Request
 
+Required in URL: answer's id.
+
+```json
+PUT /all_answers/pk/favorite/
+```
+
+### Response
+
+```json
+200 OK
+```
+
+
+
+## Delete Answer
+
 Requirement: user must be logged in. 
 
-Required Fields: answer id
+### Request
+
+Required in URL: question and answer's id.
 
 ```json
 DELETE /question/id/answers/id
@@ -576,6 +719,37 @@ DELETE /question/id/answers/id
 
 ### Response
 
+A successful deletion returns:
+
 ```json
 204 No Content
+```
+
+
+
+## Mark answer as accepted
+
+Requirement: user must be logged in.
+
+### Request
+
+```json
+PATCH /all_questions/id/all_answers/id/
+
+200 OK 
+{
+	"accepted": true
+}
+
+```
+
+### Response
+
+Required field: accepted
+
+```json
+200 OK 
+{
+	"accepted": true
+}
 ```
