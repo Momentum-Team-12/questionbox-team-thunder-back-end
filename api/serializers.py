@@ -115,3 +115,19 @@ class FavoriteAnswerSerializer(serializers.ModelSerializer):
             'id',
             'description',
         )
+
+
+class FavoriteQuestionUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = (
+            'id',
+        )
+
+
+class FavoriteAnswerUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = (
+            'id',
+        )

@@ -51,8 +51,11 @@ urlpatterns = [
     path('api/all_answers/<int:pk>/', api_views.AllAnswerView.as_view({'get': 'retrieve'}), name='all-answer-detail'),
     path('api/all_answers/<int:pk>', api_views.AllAnswerView.as_view({'get': 'retrieve'}), name='all-answer-detail'),
 
-    # path('api/all_questions/<int:pk>/favorites', api_views.FavoriteQuestionView.as_view({'get': 'list'}), name='favorite-questions-list'),
-    # path('api/all_questions/<int:pk>/favorites/', api_views.FavoriteQuestionView.as_view({'get': 'list'}), name='favorite-questions-list'),
+    path('api/all_questions/<int:pk>/favorite', api_views.FavoriteQuestionUpdateView.as_view(), name='favorite-question'),
+    path('api/all_questions/<int:pk>/favorite/', api_views.FavoriteQuestionUpdateView.as_view(), name='favorite-question'),
+
+    path('api/all_answers/<int:pk>/favorite', api_views.FavoriteAnswerUpdateView.as_view(), name='favorite-answer'),
+    path('api/all_answers/<int:pk>/favorite/', api_views.FavoriteAnswerUpdateView.as_view(), name='favorite-answer'),
 
     path('api/favorite_questions', api_views.FavoriteQuestionListView.as_view(), name='favorite-answer-detail'),
     path('api/favorite_questions/', api_views.FavoriteQuestionListView.as_view(), name='favorite-answer-detail'),
