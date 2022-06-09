@@ -22,7 +22,6 @@ NOTE: API Root is /api/
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
 |GET|[/all_answers/](#list-all-answers)|List all answers (anonymous/guest)|
 |GET|[/answers/](#list-all-users-answers)|List all logged in user created answers|
-all_answers?search=
 |GET|[/all_answers?search=<search_term>/](#search-answers)|Search answers (limited to one search term)|
 |POST|[/questions/{id}/answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
@@ -723,7 +722,7 @@ A successful deletion returns:
 
 
 
-## Mark answser as accepted
+## Mark answer as accepted
 
 Requirement: user must be logged in.
 
