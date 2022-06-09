@@ -1,12 +1,12 @@
 # Questionbox
 
-This application allows for the creation of questions and answers. Think Yahoo Answers, Quora, Stack Overflow, etc. Anyone can view the content, however, in order create a question or answer one, you must register/create for an account first.
+This application allows for the creation of questions and answers. Think Yahoo Answers, Quora, Stack Overflow, etc. Anyone can view the content, however, in order create a question or answer one, you must register/create an account first.
 
-Users can search existing questions and answers and see either a list of their own questions or all question in general. The same is possible for answers too! 
+Users can search existing questions or answers, open either a view of all question in general or just their own questions. This is applicable for answers too! 
 
 They also have the ability to favorite any question and/or answers.
 
-Also, they can mark a specific answer from another user as the accepted one, so others know what has worked for the original poster of the question. 
+Users can mark a specific answer from another user as the accepted answer, so others know what has worked for the original poster of the question.
 
 
 *Questionbox is an Application Programming Interface (API) built using Django Rest Framework (DRF)
