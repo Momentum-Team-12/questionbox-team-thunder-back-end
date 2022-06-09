@@ -1,4 +1,3 @@
-from functools import reduce
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
@@ -26,7 +25,6 @@ from rest_framework import generics
 
 from django.db.models import Q
 from rest_framework import filters
-
 
 
 class UserViewSet(viewsets.ViewSet):
@@ -61,15 +59,18 @@ class QuestionViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
-        search_term = self.request.query_params.get("search")
-        if search_term is not None:
-            results = Question.objects.filter(
-                Q(title__icontains=search_term) | 
-                Q(description__icontains=search_term))
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
 
-        else:
-            results = self.queryset.all().order_by('-id')
-        return results.order_by('-id')
+        queryset = self.queryset
+        if isinstance(queryset, QuerySet):
+            queryset = queryset.all()
+            if self.request.user.is_authenticated:
+                queryset = queryset.filter(author=self.request.user)
+        return queryset
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
@@ -124,14 +125,18 @@ class AnswerListRetrieve(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-            search_term = self.request.query_params.get("search")
-            if search_term is not None:
-                results = Answer.objects.filter(
-                    Q(description__icontains=search_term))
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
 
-            else:
-                results = self.queryset.all().order_by('-id')
-            return results.order_by('-id')
+        queryset = self.queryset
+        if isinstance(queryset, QuerySet):
+            queryset = queryset.all()
+            if self.request.user.is_authenticated:
+                queryset = queryset.filter(author=self.request.user)
+        return queryset
 
     def perform_create(self, serializer):
         pass
@@ -158,7 +163,7 @@ class AllQuestionView(viewsets.ViewSet):
 
             else:
                 results = self.queryset.all().order_by('-id')
-            return results.order_by('-id')
+            return results
 
     def list(self, request):
         queryset = self.get_queryset()
@@ -187,14 +192,19 @@ class AllAnswerViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
-                search_term = self.request.query_params.get("search")
-                if search_term is not None:
-                    results = Answer.objects.filter(
-                        Q(description__icontains=search_term))
+        assert self.queryset is not None, (
+            "'%s' should either include a `queryset` attribute, "
+            "or override the `get_queryset()` method."
+            % self.__class__.__name__
+        )
 
-                else:
-                    results = self.queryset.all().order_by('-id')
-                return results.order_by('-id')
+        queryset = self.queryset
+        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
+        if isinstance(queryset, QuerySet):
+            queryset = queryset.all()
+            queryset = queryset.filter(question=question)
+
+        return queryset
 
     def perform_create(self, serializer):
         question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
