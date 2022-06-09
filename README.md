@@ -13,6 +13,7 @@ NOTE: API Root is /api/
 |POST|[/auth/token/logout/](#logout-user)|Logout user|
 |GET|[/all_questions/](#list-of-questions-non-logged-in-user)|List all questions (anonymous/guest)|
 |GET|[/questions/](#list-of-questions-logged-in-user)|List all logged in user created questions|
+|GET|[/all_questions?search=<search_term>/]|(#search-questions)|Search questions (limited to one search term)|
 |POST|[/questions/](#create-a-new-question-for-this-user-logged-in-user)|Create a new question|
 |GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
 |PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
@@ -21,6 +22,10 @@ NOTE: API Root is /api/
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
 |GET|[/all_answers/](#list-all-answers)|List all answers (anonymous/guest)|
 |GET|[/answers/](#list-all-users-answers)|List all logged in user created answers|
+all_answers?search=
+
+|GET|[/all_answers?search=<search_term>/]|(#search-answers)|Search answers (limited to one search term)|
+
 |POST|[/questions/{id}/answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
@@ -213,6 +218,36 @@ GET /questions/
 
 
 
+## Search questions
+
+Search through questions.
+
+### Request
+
+Note: can only use 1 search parameter. It queries title and descriptions fields.
+
+```json
+GET /all_questions?search=converter
+```
+
+### Response
+
+```json
+200 OK
+
+[
+	{
+		"id": 6,
+		"title": "Power Converters",
+		"created_at": "2022-06-06T19:36:36.928032-04:00",
+		"author": "Luke",
+		"description": "Anywhere else got em?! Tosche Station is all out."
+	}
+]
+```
+
+
+
 ## Create a new question for this user (logged in user)
 
 Requirement: user must be logged in.
@@ -364,11 +399,13 @@ PATCH /question/id/
 
 ## Favorite a question
 
+Logged in user can favorite any question.
+
 Requirement: user must be logged in.
 
 ### Request
 
-Logged in user can favorite any question.
+Required in URL: question's id.
 
 ```json
 PUT /all_questions/pk/favorite/
@@ -376,8 +413,14 @@ PUT /all_questions/pk/favorite/
 
 ### Response
 
+Return will be the question's id. 
+
 ```json
 200 OK
+
+{
+	"id": 5
+}
 ```
 
 
@@ -508,6 +551,47 @@ GET /answers/
 
 
 
+## Search answers
+
+Search through answers.
+
+### Request
+
+Note: can only use 1 search parameter. It queries the title field.
+
+```json
+GET /all_answers?search=test
+```
+
+### Response
+
+```json
+200 OK
+
+[
+	{
+		"id": 11,
+		"created_at": "2022-06-09T12:18:09.641307-04:00",
+		"author": "user1",
+		"description": "Test answer/description from user1"
+	},
+	{
+		"id": 10,
+		"created_at": "2022-06-09T12:16:02.861452-04:00",
+		"author": "user1",
+		"description": "Test answer/description from user1"
+	},
+	{
+		"id": 8,
+		"created_at": "2022-06-08T11:56:03.711841-04:00",
+		"author": "Ben",
+		"description": "Odd/scary sounds perhaps? Can anyone confirm?!"
+	}
+]
+```
+
+
+
 ## Create a new answer
 
 Requirement: user must be logged in.
@@ -599,11 +683,13 @@ PUT /answer/id/ or PATCH /answer/id/
 
 ## Favorite an answer
 
+Logged in user can favorite any answer.
+
 Requirement: user must be logged in.
 
 ### Request
 
-Logged in user can favorite any answer.
+Required in URL: answer's id.
 
 ```json
 PUT /all_answers/pk/favorite/
