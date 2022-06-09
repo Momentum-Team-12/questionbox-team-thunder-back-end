@@ -18,8 +18,9 @@ NOTE: API Root is /api/
 |PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
 |PATCH|[/questions/{id}/](#update-part-of-an-existing-question)|Update part of an existing question|
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
-|GET|[/answers/](#list-all-answers)|List all answers|
-|POST|[/all_questions/{id}/all_answers/](#create-a-new-answer)|Create a new answer|
+|GET|[/all_answers/](#list-all-answers)|List all answers|
+|GET|[/answers/](#list-all-users-answers)|List all user created answers (when user is logged in|
+|POST|[/questions/{id}/answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
 |PATCH|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
@@ -398,56 +399,67 @@ If anonymous / guest attempts to delete a question:
 
 ## List all answers
 
-Anonymous user will see all answers. 
-
-Logged in user will only see their answers.
+Anonymous / guest and logged in users will see all answers.
 
 ### Request
 
 ```json
-GET /answers/
+GET /all_answers/
 ```
 
 ### Response
-
-Anonymous user:
 
 ```json
 200 OK
 
 [
 	{
-		"pk": 1,
+		"id": 5,
+		"created_at": "2022-06-06T13:46:05.672874-04:00",
 		"author": "user1",
-		"description": "user1 question1 answer1",
-		"created_at": "2022-06-03T17:52:10.041543-04:00",
-		"question": "user1 question1"
+		"description": "user1 question2 answer1"
 	},
 	{
-		"pk": 2,
-		"author": "user1",
-		"description": "user1 question1 answer2",
-		"created_at": "2022-06-03T17:52:15.895155-04:00",
-		"question": "user1 question1"
-	},
-	{
-		"pk": 3,
-		"author": "user2",
-		"description": "user2 question2 answer1",
-		"created_at": "2022-06-03T17:58:45.838335-04:00",
-		"question": "user2 question1"
-	},
-	{
-		"pk": 4,
-		"author": "user2",
-		"description": "user2 question2 answer2",
+		"id": 4,
 		"created_at": "2022-06-03T17:58:53.299983-04:00",
-		"question": "user2 question1"
+		"author": "user2",
+		"description": "user2 question2 answer2"
 	},
+	{
+		"id": 3,
+		"created_at": "2022-06-03T17:58:45.838335-04:00",
+		"author": "user2",
+		"description": "user2 question2 answer1"
+	},
+	{
+		"id": 2,
+		"created_at": "2022-06-03T17:52:15.895155-04:00",
+		"author": "user1",
+		"description": "user1 question1 answer2"
+	},
+	{
+		"id": 1,
+		"created_at": "2022-06-03T17:52:10.041543-04:00",
+		"author": "user1",
+		"description": "user1 question1 answer1"
+	}
 ]
 ```
 
-Logged in user:
+
+
+## GET /answers/
+
+Logged in user will only see their answers.
+
+### Request
+
+```json
+GET /answers
+List all answers that a user created (when they're logged in
+```
+
+### Response
 
 ```json
 200 OK
@@ -476,12 +488,12 @@ Logged in user:
 
 Requirement: user must be logged in.
 
-Requirement: description
-
 ### Request
 
+Requirement: description
+
 ```json
-POST /all_questions/id/all_answers/
+POST /questions/id/answers/
 
 {
 	"description": "user1 response to user2's question pk4"
@@ -505,9 +517,9 @@ POST /all_questions/id/all_answers/
 
 ## Details for a specific answer
 
-### Request
-
 Requirement: user must be logged in.
+
+### Request
 
 Required Fields: answer id
 
@@ -533,11 +545,11 @@ GET /answers/id/
 
 ## Update an existing answer
 
-Required fields for PUT, PATCH: description
+Requirement: user must be logged in.
 
 ### Request
 
-Requirement: user must be logged in. 
+Required fields for PUT or PATCH: description 
 
 ```json
 PUT /answer/id/ or PATCH /answer/id/ 
@@ -555,7 +567,7 @@ PUT /answer/id/ or PATCH /answer/id/
 {
 	"pk": 2,
 	"author": "Vader",
-	"description": "mebbe.. come to the moon by Alderaan!!!",
+	"description": "come to Alderaan..",
 	"created_at": "2022-06-05T17:08:08.343275-04:00",
 	"question": "Speeder"
 }
