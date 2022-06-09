@@ -11,23 +11,23 @@ NOTE: API Root is /api/
 |POST|[/auth/token/login/](#login-user)|Login user|
 |POST|[/auth/users/me/](#users-info)|User's info|
 |POST|[/auth/token/logout/](#logout-user)|Logout user|
-|GET|[/all_questions/](#list-of-questions-non-logged-in-user)|List all questions (not logged in/anonymous)|
-|GET|[/questions/](#list-of-questions-logged-in-user)|List all questions for a user|
+|GET|[/all_questions/](#list-of-questions-non-logged-in-user)|List all questions (anonymous/guest)|
+|GET|[/questions/](#list-of-questions-logged-in-user)|List all logged in user created questions|
 |POST|[/questions/](#create-a-new-question-for-this-user-logged-in-user)|Create a new question|
 |GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
 |PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
 |PATCH|[/questions/{id}/](#update-part-of-an-existing-question)|Update part of an existing question|
 |PUT|[/all_questions/{id}/favorite/](#favorite-a-question)|Favorite a question|
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
-|GET|[/all_answers/](#list-all-answers)|List all answers|
-|GET|[/answers/](#list-all-users-answers)|List all user created answers (when user is logged in)|
+|GET|[/all_answers/](#list-all-answers)|List all answers (anonymous/guest)|
+|GET|[/answers/](#list-all-users-answers)|List all logged in user created answers|
 |POST|[/questions/{id}/answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
 |PATCH|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
 |PUT|[/all_answers/{id}/favorite/](#favorite-an-answer)|Favorite an answer|
 |DELETE|[/answers/{id}/](#delete-answer)|Delete answer|
-|PATCH|[/all_questions/{id}/all_answers/{id}/](#mark-answer-as-accepted)|Mark a answer as accepted|
+|PATCH|[/all_questions/{id}/all_answers/{id}/](#mark-answer-as-accepted)|Mark an answer as accepted|
 
 
 
