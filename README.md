@@ -368,6 +368,8 @@ Requirement: user must be logged in.
 
 ### Request
 
+Logged in user can favorite any question.
+
 ```json
 PUT /all_questions/pk/favorite/
 ```
@@ -600,6 +602,8 @@ PUT /answer/id/ or PATCH /answer/id/
 Requirement: user must be logged in.
 
 ### Request
+
+Logged in user can favorite any answer.
 
 ```json
 PUT /all_answers/pk/favorite/
