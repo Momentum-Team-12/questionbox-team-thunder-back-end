@@ -16,7 +16,7 @@ NOTE: API Root is /api/
 |POST|[/questions/](#create-a-new-question-for-this-user-logged-in-user)|Create a new question|
 |GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
 |PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
-|PATCH|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
+|PATCH|[/questions/{id}/](#update-part-of-an-existing-question)|Update part of an existing question|
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
 |GET|[/answers/](#list-all-answers)|List all answers|
 |POST|[/all_questions/{id}/all_answers/](#create-a-new-answer)|Create a new answer|
@@ -24,6 +24,7 @@ NOTE: API Root is /api/
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
 |PATCH|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
 |DELETE|[/answers/{id}/](#delete-answer)|Delete answer|
+
 
 
 ## Create a new user
@@ -35,7 +36,7 @@ Required fields: username and password
 Optional fields: email
 
 ```json
-POST auth/users
+POST auth/users/
 
 {
   "username": "Luke",
@@ -45,15 +46,15 @@ POST auth/users
 
 ### Response
 
-Response: same info you provided means successful
+Response: If you receive the same info you provided, creation was successful!
 
 ```json
 201 Created
 
 {
-  "id": 4,  
-  "email": "",
+  "email": "", 
   "username": "Luke",
+  "id": 4, 
 }
 
 ```
@@ -61,12 +62,12 @@ Response: same info you provided means successful
 
 ## Login user
 
-Required fields: username, password
-
 ### Request
 
+Required fields: username, password
+
 ```json
-POST auth/token/login
+POST auth/token/login/
 
 {
     "username": "Luke",
@@ -76,7 +77,6 @@ POST auth/token/login
 
 ### Response
 
-
 ```json
 200 OK
 
@@ -84,19 +84,20 @@ POST auth/token/login
     "auth_token": "d99a2de1b0a09db0fc2da23c9fdb1fc2447fff5d"
 }
 ``` 
-NOTE: use auth token from now on
+NOTE: Must use the auth token from now for logged in user.
+
 
 
 ## User's info
 
 Requirement: user must be logged in.
 
-
 ```json
 GET /auth/users/me/
 ```
 
 ### Response
+
 ```json
 200 OK
 
@@ -111,12 +112,12 @@ GET /auth/users/me/
 
 ## Logout user
 
-Required fields: None
-
 ### Request
 
+Required fields: None
+
 ```json
-POST auth/token/logout
+POST /auth/token/logout/
 ```
 
 ### Response
@@ -129,9 +130,11 @@ POST auth/token/logout
 
 ## List of questions (non-logged in user)
 
-### Request
+Returns list of all questions.
 
-User can be anonymous / guest
+User can be anonymous / guest or logged in.
+
+### Request
 
 Required fields: None
 
@@ -144,25 +147,36 @@ GET /all_questions/
 ```json
 200 OK
 
-{
-	{
-		"id": 5,
-		"title": "Title Test",
-		"created_at": "2022-06-04T18:50:40.911851-04:00",
-		"author": "Luke"
-	},
+[
 	{
 		"id": 6,
 		"title": "Power Converters",
 		"created_at": "2022-06-06T19:36:36.928032-04:00",
-		"author": "Luke"
-	}
-}
+		"author": "Luke",
+		"description": "Anywhere else got em?! Tosche Station is all out."
+	},
+	{
+		"id": 5,
+		"title": "Testing 123",
+		"created_at": "2022-06-04T18:50:40.911851-04:00",
+		"author": "Luke",
+		"description": "Is this thing on?!"
+	},
+	{
+		"id": 4,
+		"title": "user2 question2",
+		"created_at": "2022-06-03T17:57:07.532908-04:00",
+		"author": "user2",
+		"description": "user2 question2 description"
+	},
+]
 ```
 
 
 
 ## List of questions (logged in user)
+
+Returns list of all questions for a logged in user.
 
 ### Request
 
@@ -197,11 +211,11 @@ GET /questions/
 
 ## Create a new question for this user (logged in user)
 
-Required fields: title and description
+Requirement: user must be logged in.
 
 ### Request
 
-Requirement: user must be logged in.
+Required fields: title and description
 
 ```json
 POST /questions/
@@ -226,22 +240,31 @@ POST /questions/
 }
 ```
 
+If anonymous / guest user attempts to POST:
+
+```json
+401 Unauthorized
+
+{
+	"detail": "Authentication credentials were not provided."
+}
+```
+
 
 
 ## Details for a specific question
 
-### Request
+Requirement: user must be logged in.
 
-Requirement: user must be logged in. 
+### Request
 
 ```json
 GET /questions/id/ 
 ```
 
-
 ### Response
 
-Response for GET: id, title, created_at, author, description, answers (if any)
+Response for GET: id, title, created_at, author, description, and answers (if any).
 
 ```json
 200 OK
@@ -251,7 +274,8 @@ Response for GET: id, title, created_at, author, description, answers (if any)
     "title": "Title Test",
     "author": "Luke",
     "created_at": "2022-06-04T18:50:40.911851-04:00",
-    "description": "is this on?"
+    "description": "is this on?",
+	"answers": []
 }
 ```
 
@@ -259,18 +283,18 @@ Response for GET: id, title, created_at, author, description, answers (if any)
 
 ## Update an existing question
 
-Required fields for PUT, PATCH: title and/or description
+Requirement: user must be logged in.
 
 ### Request
 
-Requirement: user must be logged in. 
+Required fields: title and description 
 
 ```json
-PUT /question/id/ or PATCH /question/id/ 
+PUT /question/id/
 
 {
-    "title": "Title Test",
-    "description": "is this on?",
+    "title": "Testing 123",
+    "description": "Is this thing on?!"
 }
 ```
 
@@ -288,13 +312,59 @@ PUT /question/id/ or PATCH /question/id/
 }
 ```
 
-## Delete Question
+If missing a required field, ex. description:
+
+```json
+400 Bad Request
+
+{
+	"description": [
+		"This field is required."
+	]
+}
+```
+
+
+
+## Update part of an existing question
+
+Requirement: user must be logged in.
 
 ### Request
 
+Required fields: title and/or description 
+
+```json
+PATCH /question/id/ 
+
+{
+    "title": "This is a test..."
+}
+```
+
+### Response
+
+```json
+200 OK
+
+{
+    "id": 5,
+    "title": "This is a test...",
+    "author": "Luke",
+    "created_at": "2022-06-04T18:50:40.911851-04:00",
+    "description": "Is this thing on?!"
+}
+```
+
+
+
+## Delete Question
+
 Requirement: user must be logged in. 
 
-Required Fields: question id
+### Request
+
+Required in URL: question's id.
 
 ```json
 DELETE /question/id/
@@ -302,8 +372,26 @@ DELETE /question/id/
 
 ### Response
 
+A successful deletion returns:
+
 ```json
 204 No Content
+```
+
+If another logged in user attempts to delete a question that is not theirs:
+```json
+404 Not Found
+{
+	"detail": "Not found."
+}
+```
+
+If anonymous / guest attempts to delete a question:
+```json
+401 Unauthorized
+{
+	"detail": "Authentication credentials were not provided."
+}
 ```
 
 
