@@ -26,6 +26,19 @@ class QuestionListSerializer(serializers.ModelSerializer):
         )
 
 
+class AnswerListSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(read_only=True, slug_field="username")
+
+    class Meta:
+        model = Question
+        fields = (
+            'id',
+            'created_at',
+            'author',
+            'description',
+        )
+
+
 class QuestionRetrieveSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(read_only=True, slug_field="username")
 
@@ -88,15 +101,33 @@ class AllAnswerSerializer(serializers.ModelSerializer):
 
 class FavoriteQuestionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Question
         fields = (
-            'favorite_questions',
+            'id',
+            'description',
         )
 
 
 class FavoriteAnswerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Answer
         fields = (
-            'favorite_answers',
+            'id',
+            'description',
+        )
+
+
+class FavoriteQuestionUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = (
+            'id',
+        )
+
+
+class FavoriteAnswerUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = (
+            'id',
         )

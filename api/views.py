@@ -8,15 +8,18 @@ from .models import User, Question, Answer
 from .serializers import (
     UserSerializer,
     QuestionListSerializer,
+    AnswerListSerializer,
     QuestionRetrieveSerializer,
     QuestionDetailSerializer,
     AnswerSerializer,
     AllAnswerSerializer,
     FavoriteQuestionSerializer,
     FavoriteAnswerSerializer,
+    FavoriteQuestionUpdateSerializer,
+    FavoriteAnswerUpdateSerializer,
     )
 from rest_framework import viewsets
-
+from rest_framework.generics import ListAPIView, UpdateAPIView
 from django.db.models.query import QuerySet
 from .custom_permissions import (
     ReadOnly,
@@ -162,8 +165,8 @@ class AllQuestionView(viewsets.ViewSet):
                     Q(description__icontains=search_term))
 
             else:
-                results = self.queryset.all().order_by('-id')
-            return results
+                results = self.queryset.all()
+            return results.order_by('-id')
 
     def list(self, request):
         queryset = self.get_queryset()
@@ -176,6 +179,35 @@ class AllQuestionView(viewsets.ViewSet):
         question = get_object_or_404(queryset, pk=pk)
 
         serializer = QuestionRetrieveSerializer(question)
+        return Response(serializer.data)
+
+
+class AllAnswerView(viewsets.ViewSet):
+    queryset = Answer.objects.all()
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+            search_term = self.request.query_params.get("search")
+            if search_term is not None:
+                results = Answer.objects.filter(
+                    Q(description__icontains=search_term)
+                )
+
+            else:
+                results = self.queryset.all()
+            return results.order_by('-id')
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = AnswerListSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = self.get_queryset()
+        question = get_object_or_404(queryset, pk=pk)
+
+        serializer = AnswerSerializer(question)
         return Response(serializer.data)
 
 
@@ -220,40 +252,57 @@ class AllAnswerViewSet(viewsets.ModelViewSet):
             instance.delete()
 
 
-class FavoriteQuestionView(viewsets.ModelViewSet):
+class FavoriteQuestionListView(ListAPIView):
+    queryset = Question.objects.all()
     serializer_class = FavoriteQuestionSerializer
-    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = self.request.user.favorite_questions.all()
-        serializer = FavoriteQuestionSerializer(queryset, many=True)
+        return self.request.user.favorite_questions.all()
+
+
+class FavoriteQuestionUpdateView(UpdateAPIView):
+    queryset = Question.objects.all()
+    serializer_class = FavoriteQuestionUpdateSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        return queryset.filter(pk=self.kwargs['pk'])[0]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_queryset()
+        if self.request.user not in instance.favorite_by.all():
+            self.request.user.favorite_questions.add(instance)
+        else:
+            self.request.user.favorite_questions.remove(instance)
+
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
-    def perform_create(self, serializer):
-        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
-        self.request.user.favorite_questions.add(question)
-        serializer.save()
 
-    def perform_update(self, serializer):
-        pass
+class FavoriteAnswerListView(ListAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = FavoriteAnswerSerializer
 
-    def perform_destroy(self, instance):
-        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
-        self.request.user.favorite_questions.remove()
+    def get_queryset(self):
+        return self.request.user.favorite_answers.all()
 
 
-class FavoriteAnswerView(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+class FavoriteAnswerUpdateView(UpdateAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = FavoriteAnswerUpdateSerializer
 
-    def list(self, request):
-        queryset = self.request.user.favorite_answers.all()
-        serializer = FavoriteAnswerSerializer(queryset, many=True)
+    def get_queryset(self):
+        queryset = self.queryset
+        return queryset.filter(pk=self.kwargs['pk'])[0]
 
-        return Response(serializer.data)
+    def update(self, request, *args, **kwargs):
+        instance = self.get_queryset()
+        if self.request.user not in instance.favorite_by.all():
+            self.request.user.favorite_answers.add(instance)
+        else:
+            self.request.user.favorite_answers.remove(instance)
 
-    def retrieve(self, request, pk=None):
-        queryset = self.request.user.favorite_answers.all()
-        answer = get_object_or_404(queryset, pk=pk)
-
-        serializer = FavoriteQuestionSerializer(answer)
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
