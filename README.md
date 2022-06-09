@@ -90,8 +90,7 @@ POST auth/token/login/
     "auth_token": "d99a2de1b0a09db0fc2da23c9fdb1fc2447fff5d"
 }
 ``` 
-NOTE: Must use the auth token from now on for logged in user.
-
+NOTE: auth_token must be passed for all requests with the logged in user. It remains active till user is [logged out](#logout-user).
 
 
 ## User's info
@@ -405,7 +404,7 @@ Requirement: user must be logged in.
 Required in URL: question's id.
 
 ```json
-PUT /all_questions/pk/favorite/
+PUT /all_questions/id/favorite/
 ```
 
 ### Response
@@ -554,7 +553,7 @@ Search through answers.
 
 ### Request
 
-Note: can only use 1 search parameter. It queries the title field.
+Note: can only use 1 search parameter. It queries the description field.
 
 ```json
 GET /all_answers?search=test
@@ -597,6 +596,8 @@ Requirement: user must be logged in.
 
 Requirement: description
 
+Required in URL: question's id.
+
 ```json
 POST /questions/id/answers/
 
@@ -626,6 +627,8 @@ Requirement: user must be logged in.
 
 ### Request
 
+Required in URL: answer's id.
+
 ```json
 GET /answers/id/
 ```
@@ -653,6 +656,8 @@ Requirement: user must be logged in.
 ### Request
 
 Required field for PUT or PATCH: description 
+
+Required in URL: answer's id.
 
 ```json
 PUT /answer/id/ or PATCH /answer/id/ 
@@ -706,7 +711,7 @@ Requirement: user must be logged in.
 
 ### Request
 
-Required in URL: question's id.
+Required in URL: question and answer's id.
 
 ```json
 DELETE /question/id/answers/id
