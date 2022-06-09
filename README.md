@@ -13,7 +13,7 @@ NOTE: API Root is /api/
 |POST|[/auth/token/logout/](#logout-user)|Logout user|
 |GET|[/all_questions/](#list-of-questions-non-logged-in-user)|List all questions (anonymous/guest)|
 |GET|[/questions/](#list-of-questions-logged-in-user)|List all logged in user created questions|
-|GET|[/all_questions?search=<search_term>/]|(#search-questions)|Search questions (limited to one search term)|
+|GET|[/all_questions?search=<search_term>/](#search-questions)|Search questions (limited to one search term)|
 |POST|[/questions/](#create-a-new-question-for-this-user-logged-in-user)|Create a new question|
 |GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
 |PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
@@ -23,9 +23,7 @@ NOTE: API Root is /api/
 |GET|[/all_answers/](#list-all-answers)|List all answers (anonymous/guest)|
 |GET|[/answers/](#list-all-users-answers)|List all logged in user created answers|
 all_answers?search=
-
-|GET|[/all_answers?search=<search_term>/]|(#search-answers)|Search answers (limited to one search term)|
-
+|GET|[/all_answers?search=<search_term>/](#search-answers)|Search answers (limited to one search term)|
 |POST|[/questions/{id}/answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
