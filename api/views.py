@@ -16,7 +16,7 @@ from .serializers import (
     FavoriteAnswerSerializer,
     )
 from rest_framework import viewsets
-
+from rest_framework.generics import ListAPIView
 from django.db.models.query import QuerySet
 from .custom_permissions import (
     ReadOnly,
@@ -179,81 +179,85 @@ class AllQuestionView(viewsets.ViewSet):
         return Response(serializer.data)
 
 
-class AllAnswerViewSet(viewsets.ModelViewSet):
+# class AllAnswerViewSet(viewsets.ModelViewSet):
+#     queryset = Answer.objects.all()
+#     serializer_class = AnswerSerializer
+#     permission_classes = (IsAuthenticatedOrReadOnly,)
+
+#     def get_serializer_class(self):
+#         if self.action in ["list"]:
+#             return AnswerSerializer
+#         if self.action in ["retrieve", "update", "partial_update"]:
+#             return AllAnswerSerializer
+#         return super().get_serializer_class()
+
+#     def get_queryset(self):
+#         assert self.queryset is not None, (
+#             "'%s' should either include a `queryset` attribute, "
+#             "or override the `get_queryset()` method."
+#             % self.__class__.__name__
+#         )
+
+#         queryset = self.queryset
+#         question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
+#         if isinstance(queryset, QuerySet):
+#             queryset = queryset.all()
+#             queryset = queryset.filter(question=question)
+
+#         return queryset
+
+#     def perform_create(self, serializer):
+#         question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
+#         if self.request.user.is_authenticated:
+#             serializer.save(author=self.request.user, question=question)
+
+#     def perform_update(self, serializer):
+#         if self.request.user == serializer.instance.author:
+#             serializer.save()
+
+#     def perform_destroy(self, instance):
+#         if self.request.user == instance.author:
+#             instance.delete()
+
+
+# # class FavoriteQuestionView(viewsets.ModelViewSet):
+#     serializer_class = FavoriteQuestionSerializer
+#     permission_classes = (IsAuthenticated,)
+
+#     def get_queryset(self):
+#         queryset = self.request.user.favorite_questions.all()
+#         serializer = FavoriteQuestionSerializer(queryset, many=True)
+#         return Response(serializer.data)
+
+#     def perform_create(self, serializer):
+#         question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
+#         self.request.user.favorite_questions.add(question)
+#         serializer.save()
+
+#     def perform_update(self, serializer):
+#         pass
+
+#     def perform_destroy(self, instance):
+#         question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
+#         self.request.user.favorite_questions.remove()
+
+
+# class FavoriteAnswerView(viewsets.ModelViewSet):
+#     permission_classes = (IsAuthenticated,)
+
+#     def list(self, request):
+#         queryset = self.request.user.favorite_answers.all()
+#         serializer = FavoriteAnswerSerializer(queryset, many=True)
+
+#         return Response(serializer.data)
+
+#     def retrieve(self, request, pk=None):
+#         queryset = self.request.user.favorite_answers.all()
+#         answer = get_object_or_404(queryset, pk=pk)
+
+#         serializer = FavoriteQuestionSerializer(answer)
+#         return Response(serializer.data)
+
+class FavoriteAnswerListView(ListAPIView):
     queryset = Answer.objects.all()
-    serializer_class = AnswerSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    def get_serializer_class(self):
-        if self.action in ["list"]:
-            return AnswerSerializer
-        if self.action in ["retrieve", "update", "partial_update"]:
-            return AllAnswerSerializer
-        return super().get_serializer_class()
-
-    def get_queryset(self):
-        assert self.queryset is not None, (
-            "'%s' should either include a `queryset` attribute, "
-            "or override the `get_queryset()` method."
-            % self.__class__.__name__
-        )
-
-        queryset = self.queryset
-        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
-        if isinstance(queryset, QuerySet):
-            queryset = queryset.all()
-            queryset = queryset.filter(question=question)
-
-        return queryset
-
-    def perform_create(self, serializer):
-        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
-        if self.request.user.is_authenticated:
-            serializer.save(author=self.request.user, question=question)
-
-    def perform_update(self, serializer):
-        if self.request.user == serializer.instance.author:
-            serializer.save()
-
-    def perform_destroy(self, instance):
-        if self.request.user == instance.author:
-            instance.delete()
-
-
-class FavoriteQuestionView(viewsets.ModelViewSet):
-    serializer_class = FavoriteQuestionSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        queryset = self.request.user.favorite_questions.all()
-        serializer = FavoriteQuestionSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def perform_create(self, serializer):
-        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
-        self.request.user.favorite_questions.add(question)
-        serializer.save()
-
-    def perform_update(self, serializer):
-        pass
-
-    def perform_destroy(self, instance):
-        question = get_object_or_404(Question, pk=self.kwargs["question_pk"])
-        self.request.user.favorite_questions.remove()
-
-
-class FavoriteAnswerView(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
-
-    def list(self, request):
-        queryset = self.request.user.favorite_answers.all()
-        serializer = FavoriteAnswerSerializer(queryset, many=True)
-
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        queryset = self.request.user.favorite_answers.all()
-        answer = get_object_or_404(queryset, pk=pk)
-
-        serializer = FavoriteQuestionSerializer(answer)
-        return Response(serializer.data)
+    serializer_class = FavoriteAnswerSerializer

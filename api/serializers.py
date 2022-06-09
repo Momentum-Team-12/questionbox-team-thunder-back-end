@@ -96,7 +96,7 @@ class FavoriteQuestionSerializer(serializers.ModelSerializer):
 
 class FavoriteAnswerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Answer
         fields = (
-            'favorite_answers',
+            'favorite_by',
         )
