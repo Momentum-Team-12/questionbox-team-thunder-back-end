@@ -261,3 +261,14 @@ class AllQuestionView(viewsets.ViewSet):
 class FavoriteAnswerListView(ListAPIView):
     queryset = Answer.objects.all()
     serializer_class = FavoriteAnswerSerializer
+
+    def get_queryset(self):
+        return self.request.user.favorite_answers.all()
+
+
+'''
+TO DO:
+use retrieveupdateapiview
+
+
+'''

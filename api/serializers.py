@@ -98,5 +98,6 @@ class FavoriteAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = (
-            'favorite_by',
+            'id',
+            'description',
         )
