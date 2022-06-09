@@ -101,7 +101,7 @@ class AllAnswerSerializer(serializers.ModelSerializer):
 
 class FavoriteQuestionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = Question
         fields = (
             'id',
             'description',
