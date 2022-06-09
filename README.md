@@ -19,7 +19,7 @@ NOTE: API Root is /api/
 |PATCH|[/questions/{id}/](#update-part-of-an-existing-question)|Update part of an existing question|
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
 |GET|[/all_answers/](#list-all-answers)|List all answers|
-|GET|[/answers/](#list-all-users-answers)|List all user created answers (when user is logged in|
+|GET|[/answers/](#list-all-users-answers)|List all user created answers (when user is logged in)|
 |POST|[/questions/{id}/answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
@@ -85,7 +85,7 @@ POST auth/token/login/
     "auth_token": "d99a2de1b0a09db0fc2da23c9fdb1fc2447fff5d"
 }
 ``` 
-NOTE: Must use the auth token from now for logged in user.
+NOTE: Must use the auth token from now on for logged in user.
 
 
 
@@ -399,7 +399,9 @@ If anonymous / guest attempts to delete a question:
 
 ## List all answers
 
-Anonymous / guest and logged in users will see all answers.
+Returns list of all answers.
+
+User can be anonymous / guest or logged in.
 
 ### Request
 
@@ -448,15 +450,14 @@ GET /all_answers/
 
 
 
-## GET /answers/
+## List all user created answers
 
 Logged in user will only see their answers.
 
 ### Request
 
 ```json
-GET /answers
-List all answers that a user created (when they're logged in
+GET /answers/
 ```
 
 ### Response
@@ -521,8 +522,6 @@ Requirement: user must be logged in.
 
 ### Request
 
-Required Fields: answer id
-
 ```json
 GET /answers/id/
 ```
@@ -549,7 +548,7 @@ Requirement: user must be logged in.
 
 ### Request
 
-Required fields for PUT or PATCH: description 
+Required field for PUT or PATCH: description 
 
 ```json
 PUT /answer/id/ or PATCH /answer/id/ 
@@ -576,17 +575,19 @@ PUT /answer/id/ or PATCH /answer/id/
 
 ## Delete Answer
 
-### Request
-
 Requirement: user must be logged in. 
 
-Required Fields: answer id
+### Request
+
+Required in URL: question's id.
 
 ```json
 DELETE /question/id/answers/id
 ```
 
 ### Response
+
+A successful deletion returns:
 
 ```json
 204 No Content
