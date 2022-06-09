@@ -17,6 +17,7 @@ NOTE: API Root is /api/
 |GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
 |PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
 |PATCH|[/questions/{id}/](#update-part-of-an-existing-question)|Update part of an existing question|
+|PUT|[/all_questions/{id}/favorite/](#favorite-a-question)|Favorite a question|
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
 |GET|[/all_answers/](#list-all-answers)|List all answers|
 |GET|[/answers/](#list-all-users-answers)|List all user created answers (when user is logged in)|
@@ -24,7 +25,9 @@ NOTE: API Root is /api/
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
 |PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
 |PATCH|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
+|PUT|[/all_answers/{id}/favorite/](#favorite-an-answer)|Favorite an answer|
 |DELETE|[/answers/{id}/](#delete-answer)|Delete answer|
+|PATCH|[/all_questions/{id}/all_answers/{id}/](#mark-answer-as-accepted)|Mark a answer as accepted|
 
 
 
@@ -359,6 +362,24 @@ PATCH /question/id/
 
 
 
+## Favorite a question
+
+Requirement: user must be logged in.
+
+### Request
+
+```json
+PUT /all_questions/pk/favorite/
+```
+
+### Response
+
+```json
+200 OK
+```
+
+
+
 ## Delete Question
 
 Requirement: user must be logged in. 
@@ -573,6 +594,25 @@ PUT /answer/id/ or PATCH /answer/id/
 ```
 
 
+
+## Favorite an answer
+
+Requirement: user must be logged in.
+
+### Request
+
+```json
+PUT /all_answers/pk/favorite/
+```
+
+### Response
+
+```json
+200 OK
+```
+
+
+
 ## Delete Answer
 
 Requirement: user must be logged in. 
@@ -591,4 +631,33 @@ A successful deletion returns:
 
 ```json
 204 No Content
+```
+
+
+
+## Mark answser as accepted
+
+Requirement: user must be logged in.
+
+### Request
+
+```json
+PATCH /all_questions/id/all_answers/id/
+
+200 OK 
+{
+	"accepted": true
+}
+
+```
+
+### Response
+
+Required field: accepted
+
+```json
+200 OK 
+{
+	"accepted": true
+}
 ```
