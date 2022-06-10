@@ -1,4 +1,21 @@
-## Base URL
+# Questionbox
+
+This application allows for the creation of questions and answers. Think Yahoo Answers, Quora, Stack Overflow, etc. Anyone can view the content, however, in order create a question or answer one, you must register/create an account first.
+
+Users can search existing questions or answers, open either a view of all question in general or just their own questions. This is applicable for answers too! 
+
+They also have the ability to favorite any question and/or answers.
+
+Users can mark a specific answer from another user as the accepted answer, so others know what has worked for the original poster of the question.
+
+
+*Questionbox is an Application Programming Interface (API) built using Django Rest Framework (DRF)
+
+All requests, except registration, login and calls to /all_questions/ and /all_answers/ require authentication.
+
+
+
+## Base URL:
 
 All endpoints begin with `https://questionbox-team-thunder-api.herokuapp.com/api/`
 
@@ -21,7 +38,7 @@ NOTE: API Root is /api/
 |PUT|[/all_questions/{id}/favorite/](#favorite-a-question)|Favorite a question|
 |DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
 |GET|[/all_answers/](#list-all-answers)|List all answers (anonymous/guest)|
-|GET|[/answers/](#list-all-users-answers)|List all logged in user created answers|
+|GET|[/answers/](#list-all-user-created-answers)|List all logged in user created answers|
 |GET|[/all_answers?search=<search_term>/](#search-answers)|Search answers (limited to one search term)|
 |POST|[/questions/{id}/answers/](#create-a-new-answer)|Create a new answer|
 |GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
@@ -52,7 +69,7 @@ POST auth/users/
 
 ### Response
 
-Response: If you receive the same info you provided, creation was successful!
+Response: If you receive the same info you provided, user creation was successful!
 
 ```json
 201 Created
@@ -299,7 +316,7 @@ GET /questions/id/
 
 ### Response
 
-Response for GET: id, title, created_at, author, description, and answers (if any).
+Response for GET: id, title, created_at, author, description, and answers (if any). In the below example, there are no answers for this question. 
 
 ```json
 200 OK
@@ -514,7 +531,7 @@ GET /all_answers/
 
 ## List all user created answers
 
-Logged in user will only see their answers.
+Returns list of all answers for a logged in user.
 
 ### Request
 
@@ -556,7 +573,7 @@ Search through answers.
 Note: can only use 1 search parameter. It queries the description field.
 
 ```json
-GET /all_answers?search=test
+GET /all_answers?search=to
 ```
 
 ### Response
@@ -566,22 +583,16 @@ GET /all_answers?search=test
 
 [
 	{
-		"id": 11,
-		"created_at": "2022-06-09T12:18:09.641307-04:00",
-		"author": "user1",
-		"description": "Test answer/description from user1"
+		"id": 14,
+		"created_at": "2022-06-09T13:54:18.760647-04:00",
+		"author": "Vader",
+		"description": "You do not need an answer to this question.."
 	},
 	{
-		"id": 10,
-		"created_at": "2022-06-09T12:16:02.861452-04:00",
+		"id": 7,
+		"created_at": "2022-06-07T10:24:08.771366-04:00",
 		"author": "user1",
-		"description": "Test answer/description from user1"
-	},
-	{
-		"id": 8,
-		"created_at": "2022-06-08T11:56:03.711841-04:00",
-		"author": "Ben",
-		"description": "Odd/scary sounds perhaps? Can anyone confirm?!"
+		"description": "user1 response (.2) to user2's question pk4"
 	}
 ]
 ```
@@ -711,7 +722,7 @@ Requirement: user must be logged in.
 
 ### Request
 
-Required in URL: question and answer's id.
+Required in URL: question id and answer id.
 
 ```json
 DELETE /question/id/answers/id
@@ -732,6 +743,8 @@ A successful deletion returns:
 Requirement: user must be logged in.
 
 ### Request
+
+Required in URL: question id and answer id.
 
 ```json
 PATCH /all_questions/id/all_answers/id/
