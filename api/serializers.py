@@ -23,7 +23,6 @@ class QuestionListSerializer(serializers.ModelSerializer):
             'created_at',
             'author',
             'description',
-            'answers',
         )
 
 
@@ -66,7 +65,6 @@ class QuestionDetailSerializer(serializers.ModelSerializer):
             'author',
             'created_at',
             'description',
-            'answers',
         )
 
 
