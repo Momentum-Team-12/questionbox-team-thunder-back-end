@@ -1,93 +1,768 @@
 # Questionbox
 
-This application is a question and answer platform, similar to Stack Overflow. It does _not_ have to be themed to code-related questions, though. Theming and design is up to you.
+This application allows for the creation of questions and answers. Think Yahoo Answers, Quora, Stack Overflow, etc. Anyone can view the content, however, in order create a question or answer one, you must register/create an account first.
 
-You will likely not be able to do ALL of the listed requirements. That is OK. Decide what the core functionality is and what you can wait to implement once you have the basics done.
+Users can search existing questions or answers, open either a view of all question in general or just their own questions. This is applicable for answers too! 
 
-### Back-end: The API
+They also have the ability to favorite any question and/or answers.
 
-Backend devs will build an API using Django and Django REST Framework that allows users to create questions and answers to questions. Question-askers can mark an answer as accepted. Logged-in users can "star" or favorite a question or answer. Your application only needs to serve JSON, not HTML.
+Users can mark a specific answer from another user as the accepted answer, so others know what has worked for the original poster of the question.
 
-You will need to make a list of your endpoints available to the front-end devs on your team.
 
-#### Requirements
+*Questionbox is an Application Programming Interface (API) built using Django Rest Framework (DRF)
 
-- Allow an authenticated user to create a question (allowing for long-form text).
-- Allow an authenticated user to create an answer to a question (one question can have many answers).
-- Allow unauthenticated users to view all questions and answers.
-- Have registration and token-based authentication.
-- Allow a user to get a list of all the questions they have posted.
-- Allow a user to get a list of all the answers they have posted.
-- Allow the original author of the question to mark an answer as accepted.
-- Questions cannot be edited once they have been asked (_note_: allowing editing of unanswered questions is listed as an extra challenge).
-- A question can be deleted by its author, whether answered or unanswered. If it is deleted, all associated answers should also be deleted.
-- Users can search the database by supplying a search term. This should use [Django's PostgreSQL full-text search](https://docs.djangoproject.com/en/3.0/ref/contrib/postgres/search/).
-  - At minimum allow a search in the text of a question.
-  - A more comprehensive search would allow searching both questions and answers.
-- Authenticated users can "star" or favorite questions or answers they like. They should also be able to un-star anything that they have starred.
-- Deploy to Heroku.
+All requests, except registration, login and calls to /all_questions/ and /all_answers/ require authentication.
 
-### 🌶️ Spicy features
 
-- Add tags to questions and allow search by tags
-- Allow a user to upload a profile photo.
-  - for Heroku, you'll need to configure a storage backend like Amazon S3 in order to upload files.
-- Allow an unanswered question to be edited.
-- Allow the author of an answer to delete or edit an answer.
 
-### Back-end development notes
+## Base URL:
 
-You should use [djoser](https://djoser.readthedocs.io/en/latest/) and [token-based authentication](https://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication) to handle registration and login.
+All endpoints begin with `https://questionbox-team-thunder-api.herokuapp.com/api/`
 
-### CORS
+NOTE: API Root is /api/
 
-CORS (Cross-Origin Resource Sharing) headers must be added to your responses for the front-end app to interact with your API. [Read this blog post to find out how to set up CORS](https://www.techiediaries.com/django-cors/). You will want to use django-cors-headers (the second option mentioned in the blog post) and set `CORS_ALLOW_ALL_ORIGINS = True`.
 
-## Front-End: The React application
+|  Method  |  Endpoint  |  Description |
+| -------- | ---------- | ------------ |
+|POST|[/auth/users/](#create-a-new-user)|Create a new user|
+|POST|[/auth/token/login/](#login-user)|Login user|
+|POST|[/auth/users/me/](#users-info)|User's info|
+|POST|[/auth/token/logout/](#logout-user)|Logout user|
+|GET|[/all_questions/](#list-of-questions-non-logged-in-user)|List all questions (anonymous/guest)|
+|GET|[/questions/](#list-of-questions-logged-in-user)|List all logged in user created questions|
+|GET|[/all_questions?search=<search_term>/](#search-questions)|Search questions (limited to one search term)|
+|POST|[/questions/](#create-a-new-question-for-this-user-logged-in-user)|Create a new question|
+|GET|[/questions/{id}/](#details-for-a-specific-question)|Details for a specific question|
+|PUT|[/questions/{id}/](#update-an-existing-question)|Update an existing question|
+|PATCH|[/questions/{id}/](#update-part-of-an-existing-question)|Update part of an existing question|
+|PUT|[/all_questions/{id}/favorite/](#favorite-a-question)|Favorite a question|
+|DELETE|[/questions/{id}/](#delete-question)|Delete an existing question|
+|GET|[/all_answers/](#list-all-answers)|List all answers (anonymous/guest)|
+|GET|[/answers/](#list-all-user-created-answers)|List all logged in user created answers|
+|GET|[/all_answers?search=<search_term>/](#search-answers)|Search answers (limited to one search term)|
+|POST|[/questions/{id}/answers/](#create-a-new-answer)|Create a new answer|
+|GET|[/answers/{id}/](#details-for-a-specific-answer)|Details for a specific answer|
+|PUT|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
+|PATCH|[/answers/{id}/](#update-an-existing-answer)|Update an existing answer|
+|PUT|[/all_answers/{id}/favorite/](#favorite-an-answer)|Favorite an answer|
+|DELETE|[/answers/{id}/](#delete-answer)|Delete answer|
+|PATCH|[/all_questions/{id}/all_answers/{id}/](#mark-answer-as-accepted)|Mark an answer as accepted|
 
-The front-end team will build a React application that will send AJAX requests to the QuestionBox API.
 
-This application is a question and answer platform, similar to Stack Overflow in format, but you can theme it and design it however you like. This application should allow logged-in users to ask questions, give and receive answers, and mark an answer as accepted. Users that are not logged in should still be able to view questions and answers, but cannot ask questions, give answers, or mark answers as accepted.
 
-### Requirements
+## Create a new user
 
-- Users can create an account.
-- Users can log in.
-- Authenticated users can ask a question.
-  - A question cannot be edited.
-  - A user can delete their own question.
-- Authenticated users can answer a question.
-- Authenticated users can choose an accepted answer among the answers to one of their questions.
-- Authenticated users have a profile page that lists all their questions and answers.
-- Authenticated users can "star" a question or answer they like.
-  - Allow a user to "unstar" something they have previously starred.
-- You will have to route some URLs.
-  - Login and registration should each have a URL, or one for both if they are in the same view.
-  - Questions should have their own route.
-  - User profiles should have their own route.
-  - If implementing pagination, you will likely use routes to implement this.
-- Deploy to Netlify
+### Request
 
-### 🌶️ Spicy features
+Required fields: username and password
 
-Most of these are dependent on whether the API supports these capabilities.
+Optional fields: email
 
-- Allow users to search the API using a search term.
-  - If your API supports tags, allow search by tags.
-- The list of questions that comes back from the API may be paginated. If so, you should implement pagination in your application.
-- Allow questions to be edited if they have not been answered.
-- Allow users to show only the questions and/or answers they have starred.
-- Allow users to follow/unfollow each other.
-- Allow users to upload a profile photo.
+```json
+POST auth/users/
 
-### Front-end Development notes
+{
+  "username": "Luke",
+  "password": "Momentum1"
+}
+```
 
-During development, you will want to be able to make requests before the API is complete. You can handle this in a few ways.
+### Response
 
-One way is to make functions or methods for all your API calls, but instead of having them actually make the calls at first, have them set the data you are expecting without actually making an API call. Another way is to use the provided exported mock API specification for Mockoon, a tool that will run a mock server for you. In this case, you will want to be able to switch which server you use based on the environment your code is running in.
+Response: If you receive the same info you provided, user creation was successful!
 
-You can [read more about approaches to building your front-end before the API is done in this dev.to article](https://dev.to/momentum/how-to-build-a-front-end-app-before-you-have-an-api-3ai3).
+```json
+201 Created
 
-If you need to switch how you access your data based on environment, read [this article on create-react-app-environments](https://medium.com/@tacomanator/environments-with-create-react-app-7b645312c09d).
+{
+  "email": "", 
+  "username": "Luke",
+  "id": 4, 
+}
 
-You can work with a back-end dev to get the back-end API running on your local machine, but you do not have to.
+```
+
+
+## Login user
+
+### Request
+
+Required fields: username, password
+
+```json
+POST auth/token/login/
+
+{
+    "username": "Luke",
+    "password": "Momentum1"
+}
+```
+
+### Response
+
+```json
+200 OK
+
+{
+    "auth_token": "d99a2de1b0a09db0fc2da23c9fdb1fc2447fff5d"
+}
+``` 
+NOTE: auth_token must be passed for all requests with the logged in user. It remains active till user is [logged out](#logout-user).
+
+
+## User's info
+
+Requirement: user must be logged in.
+
+```json
+GET /auth/users/me/
+```
+
+### Response
+
+```json
+200 OK
+
+{
+    "id": 4,
+    "username": "Luke",
+    "email": "",
+}
+```
+
+
+
+## Logout user
+
+### Request
+
+Required fields: None
+
+```json
+POST /auth/token/logout/
+```
+
+### Response
+
+```json
+204 No Content
+```
+
+
+
+## List of questions (non-logged in user)
+
+Returns list of all questions.
+
+User can be anonymous / guest or logged in.
+
+### Request
+
+Required fields: None
+
+```json
+GET /all_questions/
+```
+
+### Response
+
+```json
+200 OK
+
+[
+	{
+		"id": 6,
+		"title": "Power Converters",
+		"created_at": "2022-06-06T19:36:36.928032-04:00",
+		"author": "Luke",
+		"description": "Anywhere else got em?! Tosche Station is all out."
+	},
+	{
+		"id": 5,
+		"title": "Testing 123",
+		"created_at": "2022-06-04T18:50:40.911851-04:00",
+		"author": "Luke",
+		"description": "Is this thing on?!"
+	},
+	{
+		"id": 4,
+		"title": "user2 question2",
+		"created_at": "2022-06-03T17:57:07.532908-04:00",
+		"author": "user2",
+		"description": "user2 question2 description"
+	},
+]
+```
+
+
+
+## List of questions (logged in user)
+
+Returns list of all questions for a logged in user.
+
+### Request
+
+Requirement: user must be logged in.
+
+```json
+GET /questions/
+```
+
+### Response
+
+```json
+200 OK
+
+{
+	{
+		"id": 5,
+		"title": "Title Test",
+		"created_at": "2022-06-04T18:50:40.911851-04:00",
+		"author": "Luke"
+	},
+	{
+		"id": 6,
+		"title": "Power Converters",
+		"created_at": "2022-06-06T19:36:36.928032-04:00",
+		"author": "Luke"
+	}
+}
+```
+
+
+
+## Search questions
+
+Search through questions.
+
+### Request
+
+Note: can only use 1 search parameter. It queries title and descriptions fields.
+
+```json
+GET /all_questions?search=converter
+```
+
+### Response
+
+```json
+200 OK
+
+[
+	{
+		"id": 6,
+		"title": "Power Converters",
+		"created_at": "2022-06-06T19:36:36.928032-04:00",
+		"author": "Luke",
+		"description": "Anywhere else got em?! Tosche Station is all out."
+	}
+]
+```
+
+
+
+## Create a new question for this user (logged in user)
+
+Requirement: user must be logged in.
+
+### Request
+
+Required fields: title and description
+
+```json
+POST /questions/
+
+{
+	"title": "Desert wanderer",	
+	"description": "What's with that creepy guy walking around the desert with I hood on? Isn't he hot?!"
+}
+```
+
+### Response
+
+```json
+201 Created
+
+{
+	"id": 7,
+	"title": "Desert wanderer",
+	"author": "Luke",
+	"created_at": "2022-06-06T19:40:31.577077-04:00",
+	"description": "What's with that creepy guy walking around the desert with I hood on? Isn't he hot?!"
+}
+```
+
+If anonymous / guest user attempts to POST:
+
+```json
+401 Unauthorized
+
+{
+	"detail": "Authentication credentials were not provided."
+}
+```
+
+
+
+## Details for a specific question
+
+Requirement: user must be logged in.
+
+### Request
+
+```json
+GET /questions/id/ 
+```
+
+### Response
+
+Response for GET: id, title, created_at, author, description, and answers (if any). In the below example, there are no answers for this question. 
+
+```json
+200 OK
+
+{
+    "id": 5,
+    "title": "Title Test",
+    "author": "Luke",
+    "created_at": "2022-06-04T18:50:40.911851-04:00",
+    "description": "is this on?",
+	"answers": []
+}
+```
+
+
+
+## Update an existing question
+
+Requirement: user must be logged in.
+
+### Request
+
+Required fields: title and description 
+
+```json
+PUT /question/id/
+
+{
+    "title": "Testing 123",
+    "description": "Is this thing on?!"
+}
+```
+
+### Response
+
+```json
+200 OK
+
+{
+    "id": 5,
+    "title": "Testing 123",
+    "author": "Luke",
+    "created_at": "2022-06-04T18:50:40.911851-04:00",
+    "description": "Is this thing on?!"
+}
+```
+
+If missing a required field, ex. description:
+
+```json
+400 Bad Request
+
+{
+	"description": [
+		"This field is required."
+	]
+}
+```
+
+
+
+## Update part of an existing question
+
+Requirement: user must be logged in.
+
+### Request
+
+Required fields: title and/or description 
+
+```json
+PATCH /question/id/ 
+
+{
+    "title": "This is a test..."
+}
+```
+
+### Response
+
+```json
+200 OK
+
+{
+    "id": 5,
+    "title": "This is a test...",
+    "author": "Luke",
+    "created_at": "2022-06-04T18:50:40.911851-04:00",
+    "description": "Is this thing on?!"
+}
+```
+
+
+
+## Favorite a question
+
+Logged in user can favorite any question.
+
+Requirement: user must be logged in.
+
+### Request
+
+Required in URL: question's id.
+
+```json
+PUT /all_questions/id/favorite/
+```
+
+### Response
+
+Return will be the question's id. 
+
+```json
+200 OK
+
+{
+	"id": 5
+}
+```
+
+
+
+## Delete Question
+
+Requirement: user must be logged in. 
+
+### Request
+
+Required in URL: question's id.
+
+```json
+DELETE /question/id/
+```
+
+### Response
+
+A successful deletion returns:
+
+```json
+204 No Content
+```
+
+If another logged in user attempts to delete a question that is not theirs:
+```json
+404 Not Found
+{
+	"detail": "Not found."
+}
+```
+
+If anonymous / guest attempts to delete a question:
+```json
+401 Unauthorized
+{
+	"detail": "Authentication credentials were not provided."
+}
+```
+
+
+
+## List all answers
+
+Returns list of all answers.
+
+User can be anonymous / guest or logged in.
+
+### Request
+
+```json
+GET /all_answers/
+```
+
+### Response
+
+```json
+200 OK
+
+[
+	{
+		"id": 5,
+		"created_at": "2022-06-06T13:46:05.672874-04:00",
+		"author": "user1",
+		"description": "user1 question2 answer1"
+	},
+	{
+		"id": 4,
+		"created_at": "2022-06-03T17:58:53.299983-04:00",
+		"author": "user2",
+		"description": "user2 question2 answer2"
+	},
+	{
+		"id": 3,
+		"created_at": "2022-06-03T17:58:45.838335-04:00",
+		"author": "user2",
+		"description": "user2 question2 answer1"
+	},
+	{
+		"id": 2,
+		"created_at": "2022-06-03T17:52:15.895155-04:00",
+		"author": "user1",
+		"description": "user1 question1 answer2"
+	},
+	{
+		"id": 1,
+		"created_at": "2022-06-03T17:52:10.041543-04:00",
+		"author": "user1",
+		"description": "user1 question1 answer1"
+	}
+]
+```
+
+
+
+## List all user created answers
+
+Returns list of all answers for a logged in user.
+
+### Request
+
+```json
+GET /answers/
+```
+
+### Response
+
+```json
+200 OK
+
+[
+	{
+		"pk": 1,
+		"author": "user1",
+		"description": "user1 question1 answer1",
+		"created_at": "2022-06-03T17:52:10.041543-04:00",
+		"question": "user1 question1"
+	},
+	{
+		"pk": 2,
+		"author": "user1",
+		"description": "user1 question1 answer2",
+		"created_at": "2022-06-03T17:52:15.895155-04:00",
+		"question": "user1 question1"
+	},
+]
+```
+
+
+
+## Search answers
+
+Search through answers.
+
+### Request
+
+Note: can only use 1 search parameter. It queries the description field.
+
+```json
+GET /all_answers?search=to
+```
+
+### Response
+
+```json
+200 OK
+
+[
+	{
+		"id": 14,
+		"created_at": "2022-06-09T13:54:18.760647-04:00",
+		"author": "Vader",
+		"description": "You do not need an answer to this question.."
+	},
+	{
+		"id": 7,
+		"created_at": "2022-06-07T10:24:08.771366-04:00",
+		"author": "user1",
+		"description": "user1 response (.2) to user2's question pk4"
+	}
+]
+```
+
+
+
+## Create a new answer
+
+Requirement: user must be logged in.
+
+### Request
+
+Requirement: description
+
+Required in URL: question's id.
+
+```json
+POST /questions/id/answers/
+
+{
+	"description": "user1 response to user2's question pk4"
+}
+```
+
+### Response
+
+```json
+200 OK
+{
+	"pk": 7,
+	"author": "user1",
+	"description": "user1 response to user2's question pk4",
+	"created_at": "2022-06-07T10:24:08.771366-04:00",
+	"question": "user2 question2"
+}
+```
+
+
+
+## Details for a specific answer
+
+Requirement: user must be logged in.
+
+### Request
+
+Required in URL: answer's id.
+
+```json
+GET /answers/id/
+```
+
+### Response
+
+```json
+200 OK
+
+{
+	"pk": 2,
+	"author": "Vader",
+	"description": "mebbe.. come to the moon by Alderaan!",
+	"created_at": "2022-06-05T17:08:08.343275-04:00",
+	"question": "Speeder"
+}
+
+```
+
+
+## Update an existing answer
+
+Requirement: user must be logged in.
+
+### Request
+
+Required field for PUT or PATCH: description 
+
+Required in URL: answer's id.
+
+```json
+PUT /answer/id/ or PATCH /answer/id/ 
+
+{
+    "description": "come to Alderaan..",
+}
+```
+
+### Response
+
+```json
+200 OK
+
+{
+	"pk": 2,
+	"author": "Vader",
+	"description": "come to Alderaan..",
+	"created_at": "2022-06-05T17:08:08.343275-04:00",
+	"question": "Speeder"
+}
+```
+
+
+
+## Favorite an answer
+
+Logged in user can favorite any answer.
+
+Requirement: user must be logged in.
+
+### Request
+
+Required in URL: answer's id.
+
+```json
+PUT /all_answers/pk/favorite/
+```
+
+### Response
+
+```json
+200 OK
+```
+
+
+
+## Delete Answer
+
+Requirement: user must be logged in. 
+
+### Request
+
+Required in URL: question id and answer id.
+
+```json
+DELETE /question/id/answers/id
+```
+
+### Response
+
+A successful deletion returns:
+
+```json
+204 No Content
+```
+
+
+
+## Mark answer as accepted
+
+Requirement: user must be logged in.
+
+### Request
+
+Required in URL: question id and answer id.
+
+```json
+PATCH /all_questions/id/all_answers/id/
+
+200 OK 
+{
+	"accepted": true
+}
+
+```
+
+### Response
+
+Required field: accepted
+
+```json
+200 OK 
+{
+	"accepted": true
+}
+```
